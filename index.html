@@ -27,7 +27,10 @@
     <script src="usuarioRegistrado.js"></script>
     <script src="clavesRegistro.js"></script>
 
-    
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,34 +46,28 @@
         }
 
         .footer {
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            background-color: #343a40;
-            color: white;
-            padding: 10px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-        }
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #343a40;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 150px;
+    background: linear-gradient(to bottom, #343a40, #495057);
+    border-top: 4px solid #435c75; /* Borde de color atractivo */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil en el borde */
+}
 
-        .footer .btn {
-            margin-left: 20px;
-            height: 100%;  /* Asegura que el botón ocupe toda la altura */
-        }
 
-        .footer input {
-            max-width: 300px;
-            margin: 0 10px;
-            height: 38px;  /* Igualando la altura del input */
-        }
+     
 
-        .footer .btn, .footer input {
-            display: flex;
-            align-items: center;
-        }
+     
+
+     
 
         .swal2-container.swal2-center.swal2-backdrop-show {
     background-color: #343a40;
@@ -120,7 +117,11 @@
 div:where(.swal2-container) div:where(.swal2-html-container) {
     padding: 0 !important;  /* Elimina el padding */
 }
-
+.card{
+    background-color: #343a40;
+    color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
     </style>
 </head>
 <body>
@@ -131,10 +132,16 @@ div:where(.swal2-container) div:where(.swal2-html-container) {
     <div id="materiaList" class="row"></div> <!-- Contenedor donde se cargan las materias -->
 
 
-    <div class="footer">
-        <button class="btn btn-primary" onclick="opciones()">Opciones</button>
-        <input type="text" id="buscarEstudiante" class="form-control mb-4" placeholder="Buscar por nombre o cédula" oninput="filterStudents()">
-    </div>
+    <div class="footer animate__animated animate__backInDown justify-content-center">
+      
+        <div class="btn-group" role="group">
+            <button class="btn btn-primary" onclick="opciones()">Insertar</button>
+            <input type="text" id="buscarEstudiante" class="form-control" placeholder="Buscar por nombre o cédula" oninput="filterStudents()">
+          </div>
+          
+           
+       
+ </div>
 
     <script>
         // Cargar estudiantes y materias desde localStorage

@@ -8,6 +8,7 @@ function editAbsence(studentIndex, absenceIndex) {
     Swal.fire({
         title: 'Editar Ausencia',
         html: `
+        <div class="p-2">
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <input id="absenceDate" class="swal2-input" type="date" value="${absence.date}" placeholder="Fecha (dd/mm/yyyy)">
                 

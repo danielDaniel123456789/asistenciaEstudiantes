@@ -6,6 +6,7 @@ function editStudent(index) {
     Swal.fire({
         title: 'Editar Estudiante',
         html: `
+        <div class="p-2">
             <label for="studentName" class="swal2-label">Nombre</label>
             <input id="studentName" class="swal2-input" value="${student.name}" placeholder="Nombre">
             <label for="studentSurname" class="swal2-label">Primer Apellido</label>
@@ -14,7 +15,8 @@ function editStudent(index) {
             <input id="studentSecondSurname" class="swal2-input" value="${student.secondSurname || ''}" placeholder="Segundo Apellido">
             <label for="studentCedula" class="swal2-label">Cédula</label>
             <input id="studentCedula" class="swal2-input" value="${student.cedula || ''}" placeholder="Cédula" type="text"> <!-- Usar cedula aquí -->
-        `,
+             <div>
+            `,
         focusConfirm: false,
         showCancelButton: true, // Mostrar el botón de cancelar
         cancelButtonText: 'Cancelar', // Texto para el botón de cancelar

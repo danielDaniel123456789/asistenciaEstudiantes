@@ -1,13 +1,15 @@
 function opciones() {
     // Usar SweetAlert2 para mostrar los botones
     Swal.fire({
-        title: 'Opciones',
+        title: 'Insertar',
         html: `
-            <button class="btn btn-primary mb-2 w-100" onclick="addStudent()">Agregar Estudiante</button>
+        <div class="p-2">
+            <button class="btn btn-primary mb-2 w-100" onclick="addStudent()"> Estudiante</button>
             <br>
-            <button class="btn btn-primary mb-2 w-100" onclick="addMateria()">Agregar Materia</button>
+            <button class="btn btn-primary mb-2 w-100" onclick="addMateria()"> Materia</button>
             <br>
             <button class="btn btn-primary mb-2 w-100" onclick="misMaterias()">Mis Materias</button>
+            <div>
         `,
         showConfirmButton: false, // Desactiva el botón de confirmación
         showCancelButton: true, // Habilitar el botón de cancelar

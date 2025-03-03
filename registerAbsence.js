@@ -23,6 +23,7 @@ function registerAbsence(index) {
     Swal.fire({
         title: `Registrar Ausencia para ${student.name} ${student.surname}`,
         html: `
+        <div class="p-2">
             <div id="closeButton" class="swal-close-btn">&times;</div>
             <input id="absenceDate" class="swal-input" type="date" value="${getCurrentDate()}">
             <select id="absenceType" class="swal-input">
@@ -32,6 +33,7 @@ function registerAbsence(index) {
             <select id="absenceMateria" class="swal-input">
                 ${materiasOptions}
             </select>
+            <div>
         `,
         focusConfirm: false,
         showCancelButton: true,
