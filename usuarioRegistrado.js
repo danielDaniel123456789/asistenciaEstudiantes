@@ -1,51 +1,77 @@
 function usuarioRegistrado() {
-    const registroAsistencia = JSON.parse(localStorage.getItem('registroAsistencia'));
+    // Asegurar que el valor obtenido de localStorage siempre sea un número válido
+    const estadoUsuarioRegistrado = Number(localStorage.getItem('estadoUsuarioRegistrado'));
+    console.log("Estado de usuario registrado:", estadoUsuarioRegistrado);
 
-    if (registroAsistencia) {
-        const fechaRegistro = new Date(registroAsistencia.fechaRegistro);
-        console.log("Fecha de registro de asistencia: ", fechaRegistro);
-
-        // Verificar si han pasado más de 2 minutos desde la fecha de registro
-        const tiempoTranscurrido = new Date().getTime() - fechaRegistro.getTime();
-        const minutosTranscurridos = tiempoTranscurrido / (1000 * 60); // Convertir a minutos
-
-        if (minutosTranscurridos > 2) {
-            mostrarModalCaduco(); // Mostrar el modal si han pasado más de 2 minutos
-        }
-    } else {
-        console.log("No se ha registrado ninguna asistencia aún.");
+    // Si estadoUsuarioRegistrado es exactamente 0, siempre mostrar el modal
+    if (estadoUsuarioRegistrado === 1) {
+        console.log("Ya se registro");
+        return; // Terminar la ejecución para evitar que siga procesando
     }
+    else  {
+
+        console.log("Debe registrase:");
+        const registroAsistencia = JSON.parse(localStorage.getItem('registroAsistencia'));
+
+        if (registroAsistencia) {
+            const fechaRegistro = new Date(registroAsistencia.fechaRegistro);
+            console.log("Fecha de registro de asistencia: ", fechaRegistro);
+    
+            // Verificar si han pasado más de 2 minutos desde la fecha de registro
+            const tiempoTranscurrido = new Date().getTime() - fechaRegistro.getTime();
+            const minutosTranscurridos = tiempoTranscurrido / (1000 * 60); // Convertir a minutos
+    
+            if (minutosTranscurridos > 2) {
+                mostrarModalCaducot(); // Mostrar el modal si han pasado más de 2 minutos
+            }
+        } else {
+            console.log("No se ha registrado ninguna asistencia aún.");
+        }
+    }
+
+
 }
+
 
 function mostrarModalCaducot() {
-    // Mostrar el modal con un input para que el usuario ingrese los caracteres restantes
+    // Seleccionar una clave aleatoria del array
+    const claveAleatoria = claves[Math.floor(Math.random() * claves.length)];
+
     Swal.fire({
-        title: 'Clave parcial',
         html: `
-       
-            <h5>Codido Activación: ${claves[0].slice(0, 3)}</h5>
-            <input id="claveInput" class="swal2-input" placeholder="Escribe los caracteres restantes" value="${claves[0].slice(0, 3)}">
+            <h5>Código de Activación:</h5>
+            <h3>${claveAleatoria.slice(0, 3)}</h3> <!-- Muestra los primeros 3 caracteres de la clave aleatoria -->
+            <input id="claveInput" class="swal2-input" placeholder="Escribe la clave completa">
         `,
         focusConfirm: false,
-        showCancelButton: false,  // Mostrar botón de cancelar
-        cancelButtonText: 'Cancelar',  // Texto del botón de cancelar
-        confirmButtonText: 'Verificar',  // Texto del botón de confirmar
-        allowOutsideClick: false,  // Evitar que el modal se cierre al hacer clic fuera
+        showCancelButton: true,
+        confirmButtonText: 'Verificar',
+        allowOutsideClick: false,
         preConfirm: () => {
-            const claveInput = document.getElementById('claveInput').value;
+            const claveInput = document.getElementById('claveInput').value.trim();
 
-            // Verificar que el valor ingresado coincida con los primeros 3 caracteres de alguna clave en el array
-            const claveCompleta = claves.find(clave => clave.startsWith(claveInput));
+            // Verificar si la clave ingresada coincide con la clave aleatoria seleccionada
+            if (claveInput === claveAleatoria) {
+                // Si la clave es correcta, mostrar mensaje de éxito y cerrar el modal
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Clave correcta',
+                    text: 'Has ingresado la clave correctamente.',
+                });
 
-            if (claveCompleta) {
-                // Si hay coincidencia, completar el valor con los caracteres restantes
-                pedirValorCompleto(claveCompleta);
+                // Guardar el estado de usuario registrado como 1 en localStorage
+                localStorage.setItem('estadoUsuarioRegistrado', JSON.stringify(1));
+
+                return true; // Retorna true para cerrar el modal
             } else {
-                Swal.showValidationMessage('La clave no coincide con los primeros 3 caracteres de ninguna clave.');
+                Swal.showValidationMessage('La clave ingresada no es correcta.');
+                return false; // No cierra el modal si la clave es incorrecta
             }
-        }
+        },
+        footer: `<a href="https://wa.me/50685502748?text=Contacta%20a%20Daniel%20para%20que%20te%20pase%20la%20clave%20de%20acceso." target="_blank">¿No tienes la clave? Contacta a Daniel</a>`
     });
 }
+
 
 // Función para pedir el valor completo de la clave
 function pedirValorCompleto(claveCompleta) {

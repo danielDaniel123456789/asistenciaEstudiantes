@@ -111,6 +111,10 @@
     outline: none;
     background: #fff;
 }
+/* Sobrescribir el padding para el .swal2-input */
+.swal2-container .swal2-input {
+    padding: 0 !important;  /* Elimina el padding */
+}
 
     </style>
 </head>
@@ -131,9 +135,9 @@
         // Cargar estudiantes y materias desde localStorage
         window.onload = function() {
     loadStudents();
-    loadMaterias(); // Cargar materias al iniciar la página
- //   usuarioRegistrado();
- mostrarModalCaducot();  // Comprobar si el usuario está registrado e imprimir la fecha de registro
+    
+   usuarioRegistrado();
+ //mostrarModalCaducot();  // Comprobar si el usuario está registrado e imprimir la fecha de registro
 };
     </script>
 
