@@ -3,7 +3,7 @@ function usuarioRegistrado() {
     const estadoUsuarioRegistrado = Number(localStorage.getItem('estadoUsuarioRegistrado'));
     console.log("Estado de usuario registrado:", estadoUsuarioRegistrado);
 
-    // Si estadoUsuarioRegistrado es exactamente 0, siempre mostrar el modal
+    // Si estadoUsuarioRegistrado es exactamente 1, siempre mostrar el modal
     if (estadoUsuarioRegistrado === 1) {
         console.log("Ya se registro");
         return; // Terminar la ejecución para evitar que siga procesando
@@ -17,20 +17,19 @@ function usuarioRegistrado() {
             const fechaRegistro = new Date(registroAsistencia.fechaRegistro);
             console.log("Fecha de registro de asistencia: ", fechaRegistro);
     
-            // Verificar si han pasado más de 2 minutos desde la fecha de registro
+            // Verificar si han pasado más de 10 días desde la fecha de registro
             const tiempoTranscurrido = new Date().getTime() - fechaRegistro.getTime();
-            const minutosTranscurridos = tiempoTranscurrido / (1000 * 60); // Convertir a minutos
+            const diasTranscurridos = tiempoTranscurrido / (1000 * 60 * 60 * 24); // Convertir a días
     
-            if (minutosTranscurridos > 2) {
-                mostrarModalCaducot(); // Mostrar el modal si han pasado más de 2 minutos
+            if (diasTranscurridos > 10) {
+                mostrarModalCaducot(); // Mostrar el modal si han pasado más de 10 días
             }
         } else {
             console.log("No se ha registrado ninguna asistencia aún.");
         }
     }
-
-
 }
+
 
 
 function mostrarModalCaducot() {
