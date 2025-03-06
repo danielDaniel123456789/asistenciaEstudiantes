@@ -56,7 +56,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 150px;
+    height: 80px;
     background: linear-gradient(to bottom, #343a40, #495057);
     border-top: 4px solid #435c75; /* Borde de color atractivo */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil en el borde */
@@ -122,15 +122,23 @@ div:where(.swal2-container) div:where(.swal2-html-container) {
     color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
 }
+#listaEstudiantes{
+    height: 90vh;
+    overflow-y: auto;
+}
     </style>
 </head>
 <body>
-    <div class="container text-center">
-        <h3 class="my-4 text-white">Control de Ausencias</h3>
-        <div id="studentList" class="row"></div>
-    </div>
-    <div id="materiaList" class="row"></div> <!-- Contenedor donde se cargan las materias -->
 
+    <div id="listaEstudiantes">
+        <div class="container text-center">
+            <h3 class="my-4 text-white">Control de Ausencias</h3>
+            <div id="studentList" class="row"></div>
+        </div>
+        <div id="materiaList" class="row"></div> <!-- Contenedor donde se cargan las materias -->
+    
+    </div>
+ 
 
     <div class="footer animate__animated animate__backInDown justify-content-center">
       
