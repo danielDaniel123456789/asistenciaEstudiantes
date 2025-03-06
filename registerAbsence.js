@@ -27,8 +27,9 @@ function registerAbsence(index) {
             <div id="closeButton" class="swal-close-btn">&times;</div>
             <input id="absenceDate" class="swal-input" type="date" value="${getCurrentDate()}">
             <select id="absenceType" class="swal-input">
-                <option value="justificada">Ausencia Justificada</option>
-                <option value="injustificada">Ausencia Injustificada</option>
+                <option value="Justificada">Ausencia Justificada</option>
+                <option value="Injustificada">Ausencia Injustificada</option>
+                 <option value="Tardía">Tardía</option>
             </select>
             <select id="absenceMateria" class="swal-input">
                 ${materiasOptions}

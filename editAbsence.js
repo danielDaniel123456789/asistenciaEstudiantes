@@ -13,8 +13,9 @@ function editAbsence(studentIndex, absenceIndex) {
                 <input id="absenceDate" class="swal2-input" type="date" value="${absence.date}" placeholder="Fecha (dd/mm/yyyy)">
                 
                 <select id="absenceType" class="swal2-input" >
-                    <option value="justificada" ${absence.type === 'justificada' ? 'selected' : ''}>Ausencia Justificada</option>
-                    <option value="injustificada" ${absence.type === 'injustificada' ? 'selected' : ''}>Ausencia Injustificada</option>
+                    <option value="Justificada" ${absence.type === 'Justificada' ? 'selected' : ''}>Ausencia Justificada</option>
+                    <option value="Injustificada" ${absence.type === 'Injustificada' ? 'selected' : ''}>Ausencia Injustificada</option>
+                      <option value="Tardía" ${absence.type === 'Tardía' ? 'selected' : ''}>Tardía</option>
                 </select>
 
                 <select id="absenceMateria" class="swal2-input" >
