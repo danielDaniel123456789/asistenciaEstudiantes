@@ -6,29 +6,33 @@
     <title>Control de Ausencias</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="addStudent.js"></script>
-    <script src="saveStudent.js"></script>
-    <script src="loadStudents.js"></script>
-    <script src="registerAbsence.js"></script>
-    <script src="getCurrentDate.js"></script>
-    <script src="filterStudents.js"></script>
-    <script src="displayStudents.js"></script>
-    <script src="viewAbsences.js"></script>
-    <script src="editAbsence.js"></script>
-    <script src="deleteAbsence.js"></script>
-    <script src="copyStudentData.js"></script>
-    <script src="editStudent.js"></script>
-    <script src="capitalizeFirstLetter.js"></script>
-    <script src="copyStudentPadre.js"></script>
-    <script src="addMateria.js"></script>
-    <script src="misMaterias.js"></script>
-    <script src="opciones.js"></script>
-    <script src="viewAbsencesRecargar.js"></script>
-    <script src="usuarioRegistrado.js"></script>
-    <script src="clavesRegistro.js"></script>
-
-    <link
-    rel="stylesheet"
+    <script src="ausencia/addStudent.js"></script>
+    <script src="ausencia/saveStudent.js"></script>
+    <script src="ausencia/loadStudents.js"></script>
+    <script src="ausencia/registerAbsence.js"></script>
+    <script src="ausencia/getCurrentDate.js"></script>
+    <script src="ausencia/filterStudents.js"></script>
+    <script src="ausencia/displayStudents.js"></script>
+    <script src="ausencia/viewAbsences.js"></script>
+    <script src="ausencia/editAbsence.js"></script>
+    <script src="ausencia/deleteAbsence.js"></script>
+    <script src="ausencia/copyStudentData.js"></script>
+    <script src="ausencia/editStudent.js"></script>
+    <script src="ausencia/capitalizeFirstLetter.js"></script>
+    <script src="ausencia/copyStudentPadre.js"></script>
+    <script src="ausencia/addMateria.js"></script>
+    <script src="ausencia/misMaterias.js"></script>
+    <script src="ausencia/opciones.js"></script>
+    <script src="ausencia/viewAbsencesRecargar.js"></script>
+    <script src="ausencia/usuarioRegistrado.js"></script>
+    <script src="ausencia/clavesRegistro.js"></script>
+    <script src="cotidiano/informeTrabajoCotidiano.js"></script>
+    <script src="cotidiano/trabajoCotidiano.js"></script>
+    <script src="cotidiano/abrirInformeCotidiano.js"></script>
+    <script src="cotidiano/deleteTrabajoCotidiano.js"></script>
+    <script src="cotidiano/editTrabajoCotidiano.js"></script>
+     
+    <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   />
     <style>
@@ -44,7 +48,12 @@
         .student-card .btn {
             margin-left: 10px;
         }
-
+        #listaEstudiantes {
+    height: 90vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
         .footer {
     position: fixed;
     left: 0;
@@ -56,7 +65,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 80px;
+    height: 70px;
     background: linear-gradient(to bottom, #343a40, #495057);
     border-top: 4px solid #435c75; /* Borde de color atractivo */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil en el borde */
@@ -71,6 +80,12 @@
 
         .swal2-container.swal2-center.swal2-backdrop-show {
     background-color: #343a40;
+}
+
+select#materiaSelect {
+    background-color: #343a40;
+    color: white;
+    border-radius: 8px;
 }
 
 /* Botón de cierre en la esquina */
@@ -122,14 +137,9 @@ div:where(.swal2-container) div:where(.swal2-html-container) {
     color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
 }
-#listaEstudiantes{
-    height: 90vh;
-    overflow-y: auto;
-}
     </style>
 </head>
 <body>
-
     <div id="listaEstudiantes">
         <div class="container text-center">
             <h3 class="my-4 text-white">Control de Ausencias</h3>
