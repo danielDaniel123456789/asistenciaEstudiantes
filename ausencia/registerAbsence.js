@@ -1,74 +1,31 @@
 // Función para registrar una ausencia con materia
-function registerAbsence(index) {
+function registerAbsence(studentId) {
     const students = JSON.parse(localStorage.getItem('students')) || [];
-    const student = students[index];
+    const student = students.find(s => s.id === studentId); // Buscar al estudiante por ID
 
-    // Obtener las materias almacenadas en localStorage
-    const materias = JSON.parse(localStorage.getItem('materias')) || [];
+    console.log('Estudiante encontrado:', student); // Verificar los datos del estudiante
 
-    // Verificar si hay materias disponibles
-    if (materias.length === 0) {
-        Swal.fire('Sin Materias', 'No se han registrado materias. Por favor, agregue materias primero.', 'warning');
+    if (!student) {
+        Swal.fire('Error', 'Estudiante no encontrado', 'error');
         return;
     }
 
-    // Recuperar la última materia seleccionada si existe
-    const lastSelectedMateria = student.lastSelectedMateria || '';
+    // Obtener las materias almacenadas en localStorage
+    const materias = JSON.parse(localStorage.getItem('materias')) || [];
+    console.log('Materias en localStorage:', materias); // Verificar las materias disponibles
 
-    // Crear opciones del select con la última materia seleccionada por defecto
-    let materiasOptions = materias.map(materia => 
-        `<option value="${materia}" ${materia === lastSelectedMateria ? 'selected' : ''}>${materia}</option>`
-    ).join('');
+    // Verifica si la materia asociada existe utilizando la propiedad correcta (materiaId)
+    const materia = materias.find(m => m.id === student.materiaId); // Usamos student.materiaId
+    console.log('Materia encontrada:', materia); // Verificar la materia encontrada
 
-    Swal.fire({
-        title: `Registrar Ausencia para ${student.name} ${student.surname}`,
-        html: `
-        <div class="p-2">
-            <div id="closeButton" class="swal-close-btn">&times;</div>
-            <input id="absenceDate" class="swal-input" type="date" value="${getCurrentDate()}">
-            <select id="absenceType" class="swal-input">
-                <option value="justificada">Ausencia Justificada</option>
-                <option value="injustificada">Ausencia Injustificada</option>
-                 <option value="tardía">Llego tarde a clases</option>
-            </select>
-            <select id="absenceMateria" class="swal-input">
-                ${materiasOptions}
-            </select>
-            <div>
-        `,
-        focusConfirm: false,
-        showCancelButton: true,
-        cancelButtonText: 'Cancelar',
-        preConfirm: () => {
-            const date = document.getElementById('absenceDate').value;
-            const type = document.getElementById('absenceType').value;
-            const materia = document.getElementById('absenceMateria').value;
+    // Obtener los grupos desde localStorage
+    const grupos = JSON.parse(localStorage.getItem('grupos')) || [];
+    console.log('Grupos en localStorage:', grupos); // Verificar los grupos disponibles
 
-            if (date && type && materia) {
-                // Guardar la materia seleccionada en el estudiante
-                student.lastSelectedMateria = materia;
+    // Buscar el nombre del grupo en base al groupId del estudiante
+    const grupo = grupos.find(g => g.id === student.groupId);
+    console.log('Grupo encontrado:', grupo); // Verificar el grupo encontrado
 
-                // Guardar la ausencia
-                const absence = { date, type, materia };
-                student.absences.push(absence);
-                students[index] = student;
-                localStorage.setItem('students', JSON.stringify(students));
-
-                Swal.fire('Ausencia Registrada', 'La ausencia ha sido registrada correctamente.', 'success');
-
-                loadStudents();
-
-                setTimeout(() => {
-                    viewAbsencesRecargar(index, materia); // Cargar el informe de ausencias con la última materia seleccionada
-                }, 500);
-            } else {
-                Swal.showValidationMessage('Por favor complete todos los campos');
-            }
-        },
-        willOpen: () => {
-            document.getElementById('closeButton').addEventListener('click', () => {
-                Swal.close();
-            });
-        }
-    });
+    // Mostrar los datos del estudiante antes de registrar la ausencia
+    alert(JSON.stringify(student, null, 2));  // Muestra todo el objeto estudiante en formato legible
 }

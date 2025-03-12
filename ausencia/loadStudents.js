@@ -8,14 +8,14 @@ function loadStudents() {
         studentList.innerHTML = "<p>No hay estudiantes registrados.</p>";
     }
 
-    students.forEach((student, index) => {
+    students.forEach((student) => {
         const studentItem = document.createElement('div');
         studentItem.classList.add('col-12', 'col-md-6', 'col-lg-4', 'student-card');
         studentItem.innerHTML = `
         <div class="card text-center">
             <div class="card-body">
                 <h5 class="card-title">
-                    <button class="btn btn-link btn-sm" onclick="editStudent(${index})">
+                    <button class="btn btn-link btn-sm" onclick="editStudent(${student.id})">
                         ✏️
                         <!-- Carácter de lápiz -->
                     </button>
@@ -25,13 +25,13 @@ function loadStudents() {
 
                 <br>
                 <div class="p-2 btn-group" role="group" aria-label="Basic example">
-                    <button type="button" class="btn btn-primary" onclick="registerAbsence(${index})">Ausencia</button>
-                    <button type="button" class="btn btn-primary" onclick="viewAbsences(${index})">Informe</button>
+                    <button type="button" class="btn btn-primary" onclick="registerAbsence(${student.id})">${student.id} -Registrar Ausencia</button>
+                    <button type="button" class="btn btn-primary" onclick="viewAbsences(${student.id})">Informe</button>
                 </div>
 
                 <div class="p-2 btn-group" role="group" aria-label="Basic example">
-                    <button type="button" class="btn btn-primary" onclick="trabajoCotidiano(${index})">Cotidiano</button>
-                    <button type="button" class="btn btn-primary" onclick="informeTrabajoCotidiano(${index})">Informe</button>
+                    <button type="button" class="btn btn-primary" onclick="trabajoCotidiano(${student.id})">Cotidiano</button>
+                    <button type="button" class="btn btn-primary" onclick="informeTrabajoCotidiano(${student.id})">Informe</button>
                 </div>
             </div>
         </div>
