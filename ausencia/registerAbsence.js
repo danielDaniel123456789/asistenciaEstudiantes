@@ -1,31 +1,75 @@
-// Función para registrar una ausencia con materia
 function registerAbsence(studentId) {
     const students = JSON.parse(localStorage.getItem('students')) || [];
-    const student = students.find(s => s.id === studentId); // Buscar al estudiante por ID
+    const materias = JSON.parse(localStorage.getItem('materias')) || [];
+    const grupos = JSON.parse(localStorage.getItem('grupos')) || [];
 
-    console.log('Estudiante encontrado:', student); // Verificar los datos del estudiante
+    const student = students.find(s => s.id === studentId); // Buscar al estudiante por ID
 
     if (!student) {
         Swal.fire('Error', 'Estudiante no encontrado', 'error');
         return;
     }
 
-    // Obtener las materias almacenadas en localStorage
-    const materias = JSON.parse(localStorage.getItem('materias')) || [];
-    console.log('Materias en localStorage:', materias); // Verificar las materias disponibles
+    console.log('student:', student);
+    
+    const idEstudiante = student.id;
+    const idMateria = Number(student.materiaId); // Convertir a número
+    const idGrupo = Number(student.groupId); // Convertir a número
 
-    // Verifica si la materia asociada existe utilizando la propiedad correcta (materiaId)
-    const materia = materias.find(m => m.id === student.materiaId); // Usamos student.materiaId
-    console.log('Materia encontrada:', materia); // Verificar la materia encontrada
+    console.log('idMateria:', idMateria);
+    console.log('idGrupo:', idGrupo);
 
-    // Obtener los grupos desde localStorage
-    const grupos = JSON.parse(localStorage.getItem('grupos')) || [];
-    console.log('Grupos en localStorage:', grupos); // Verificar los grupos disponibles
+    // Buscar la materia correspondiente
+    const materia = materias.find(m => m.id === idMateria);
+    // Buscar el grupo correspondiente
+    const grupo = grupos.find(g => g.id === idGrupo);
 
-    // Buscar el nombre del grupo en base al groupId del estudiante
-    const grupo = grupos.find(g => g.id === student.groupId);
-    console.log('Grupo encontrado:', grupo); // Verificar el grupo encontrado
+    console.log('materias:', materias);
+    console.log('materia encontrada:', materia);
+    console.log('grupos:', grupos);
+    console.log('grupo encontrado:', grupo);
 
-    // Mostrar los datos del estudiante antes de registrar la ausencia
-    alert(JSON.stringify(student, null, 2));  // Muestra todo el objeto estudiante en formato legible
+    if (!materia) {
+        Swal.fire('Error', 'Materia no encontrada', 'error');
+        return;
+    }
+
+    if (!grupo) {
+        Swal.fire('Error', 'Grupo no encontrado', 'error');
+        return;
+    }
+
+    // Mostrar la alerta con opciones de ausencia
+    Swal.fire({
+    
+        html: `
+        <h5>Registrar Ausencia:</h5>
+            <strong>Estudiante:</strong><br>
+            Nombre: ${student.name}<br>
+            ID: ${student.id}<br>
+            Grupo: ${grupo.nombre}<br>
+            Materia: ${materia.nombre}<br><br>
+            <label for="absenceType">Seleccionar tipo de ausencia:</label>
+            <br>
+            <select id="absenceType" class="form-select">
+                <option value="justificada">Ausencia Justificada</option>
+                <option value="injustificada">Ausencia Injustificada</option>
+                <option value="tardía">Llegó tarde a clases</option>
+            </select>
+        `,
+      
+        showCancelButton: true,
+        confirmButtonText: 'Guardar',
+        preConfirm: () => {
+            const absenceType = document.getElementById('absenceType').value;
+            console.log('Tipo de ausencia seleccionada:', absenceType);
+
+            // Guardar la ausencia en el localStorage (opcional)
+            let absences = JSON.parse(localStorage.getItem('absences')) || [];
+            absences.push({ studentId, type: absenceType, materia: materia.nombre, grupo: grupo.nombre });
+            localStorage.setItem('absences', JSON.stringify(absences));
+
+            Swal.fire('Guardado', 'Ausencia registrada correctamente', 'success');
+        }
+    });
 }
