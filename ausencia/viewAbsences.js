@@ -3,15 +3,26 @@ function viewAbsences(index) {
     const students = JSON.parse(localStorage.getItem('students')) || [];
 
     console.log(students);
-    //const student = students[index];
-    const studentData = students.find(s => s.id === studentId);
-    console.log("d2 "+studentData);
-    console.log("fin ");
-    // Verificar si la propiedad 'absences' existe en el estudiante
-    if (!student || !student.absences || student.absences.length === 0) {
-        Swal.fire('Error', 'Este estudiante no tiene ausencias registradas.', 'error');
-        return; // Salir si no hay información válida
+
+    if (students.length > 0) {
+        const student = students[0]; // Accede al primer objeto dentro del array
+        console.log("ID:", student.id);
+        console.log("Nombre:", student.name);
+        console.log("Cédula:", student.cedula);
+        console.log("absences:", student.absences);
+
+        console.log("Ausencias del estudiante:");
+student.absences.forEach((absence, index) => {
+    console.log(`Ausencia ${index + 1}:`);
+    console.log("Materia ID:", absence.materiaId);
+    console.log("Grupo ID:", absence.grupoId);
+    console.log("Tipo:", absence.type);
+});
+    } else {
+        console.log("No hay estudiantes en el array.");
     }
+  
+    console.log("FIN"); 
 
     // Obtener todas las materias de las ausencias del estudiante (usando materiaId)
     const materias = [...new Set(student.absences.map(absence => absence.materiaId))];
