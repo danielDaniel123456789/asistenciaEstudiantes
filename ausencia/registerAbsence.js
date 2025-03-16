@@ -39,6 +39,9 @@ function registerAbsence(studentId) {
         return;
     }
 
+    // Obtener la fecha actual en formato YYYY-MM-DD
+    const currentDate = new Date().toISOString().split('T')[0];
+
     // Mostrar la alerta con opciones de ausencia
     Swal.fire({
         html: `
@@ -63,13 +66,14 @@ function registerAbsence(studentId) {
             const absenceType = document.getElementById('absenceType').value;
             console.log('Tipo de ausencia seleccionada:', absenceType);
 
-            // Buscar al estudiante y agregar la ausencia con materiaId y grupo.id
+            // Buscar al estudiante y agregar la ausencia con materiaId, grupoId y la fecha
             const updatedStudents = students.map(s => {
                 if (s.id === studentId) {
                     s.absences.push({
                         type: absenceType,
                         materiaId: materia.id,   // Guardar el materiaId
-                        grupoId: grupo.id        // Guardar el grupo.id
+                        grupoId: grupo.id,       // Guardar el grupoId
+                        date: currentDate        // Agregar la fecha de la ausencia
                     });
                 }
                 return s;

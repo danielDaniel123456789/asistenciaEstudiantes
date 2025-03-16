@@ -1,6 +1,17 @@
 function viewAbsences(index) {
     console.log("inicio " + index);
     const students = JSON.parse(localStorage.getItem('students')) || [];
+    const grupos = JSON.parse(localStorage.getItem('grupos')) || [];
+    nombreGrupo ="";
+    console.log("grupos ", grupos);
+
+
+
+    for (let i = 0; i < grupos.length; i++) {
+        const grupo = grupos[i];
+        nombreGrupo=grupo.nombre;
+        console.log(`Grupo ${i + 1}: ID = ${grupo.id}, Nombre = ${grupo.nombre}`);
+    }
 
     if (students.length > 0) {
         const student = students[0]; // Accede al primer objeto dentro del array
@@ -8,9 +19,6 @@ function viewAbsences(index) {
         console.log("Nombre:", student.name);
         console.log("Cédula:", student.cedula);
         console.log("absences:", student.absences);
-
-        // Verificar si el apellido (surname) está definido, si no lo está, usar una cadena vacía
-        const surname = student.surname || '';
 
         // Obtener todas las materias desde localStorage
         const materiasList = JSON.parse(localStorage.getItem('materias')) || [];
@@ -27,6 +35,8 @@ function viewAbsences(index) {
 
         // Ahora obtenemos la primera materia (porque el título debe contener el nombre de la materia)
         const selectedMateria = materiaNames[0] || 'Materia no disponible';
+
+        
 
         // Crear el contenido HTML para la tabla de ausencias
         let absenceDetails = `
@@ -58,10 +68,15 @@ function viewAbsences(index) {
 
         absenceDetails += `</tbody></table>`;
 
-        // Mostrar SweetAlert2 con los datos del estudiante, la materia y la tabla de ausencias
+        // Mostrar SweetAlert2 con los datos del estudiante, el grupo, la materia y la tabla de ausencias
         Swal.fire({
-            title: `Informe de Ausencias de ${student.name} ${surname} - Materia: ${selectedMateria}`,
-            html: absenceDetails,
+           html: `
+           <br>
+
+            <h5>Informe de Ausencias de ${student.name} - Materia: ${selectedMateria} -  Grupo ${nombreGrupo}:</h5>
+               
+                ${absenceDetails}
+            `,
             showCancelButton: true,
             cancelButtonText: 'Cancelar',
             focusConfirm: false
