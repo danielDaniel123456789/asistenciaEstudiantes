@@ -41,7 +41,6 @@ function registerAbsence(studentId) {
 
     // Mostrar la alerta con opciones de ausencia
     Swal.fire({
-    
         html: `
         <h5>Registrar Ausencia:</h5>
             <strong>Estudiante:</strong><br>
@@ -64,10 +63,20 @@ function registerAbsence(studentId) {
             const absenceType = document.getElementById('absenceType').value;
             console.log('Tipo de ausencia seleccionada:', absenceType);
 
-            // Guardar la ausencia en el localStorage (opcional)
-            let absences = JSON.parse(localStorage.getItem('absences')) || [];
-            absences.push({ studentId, type: absenceType, materia: materia.nombre, grupo: grupo.nombre });
-            localStorage.setItem('absences', JSON.stringify(absences));
+            // Buscar al estudiante y agregar la ausencia con materiaId y grupo.id
+            const updatedStudents = students.map(s => {
+                if (s.id === studentId) {
+                    s.absences.push({
+                        type: absenceType,
+                        materiaId: materia.id,   // Guardar el materiaId
+                        grupoId: grupo.id        // Guardar el grupo.id
+                    });
+                }
+                return s;
+            });
+
+            // Actualizar el localStorage con los estudiantes modificados
+            localStorage.setItem('students', JSON.stringify(updatedStudents));
 
             Swal.fire('Guardado', 'Ausencia registrada correctamente', 'success');
         }

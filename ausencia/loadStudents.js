@@ -1,5 +1,6 @@
 function loadStudents() {
-    const students = JSON.parse(localStorage.getItem('students')) || [];
+    // Obtener los estudiantes desde el localStorage de forma segura
+    const students = localStorage.getItem('students') ? JSON.parse(localStorage.getItem('students')) : [];
     const studentList = document.getElementById('studentList');
     studentList.innerHTML = ''; // Limpiar lista antes de cargar
 

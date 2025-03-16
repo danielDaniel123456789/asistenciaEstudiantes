@@ -1,7 +1,7 @@
 function addStudent() {
-    // Cargar los grupos y materias desde el localStorage
-    let grupos = JSON.parse(localStorage.getItem('grupos')) || [];
-    let materias = JSON.parse(localStorage.getItem('materias')) || [];
+    // Cargar los grupos y materias desde el localStorage de forma segura
+    let grupos = localStorage.getItem('grupos') ? JSON.parse(localStorage.getItem('grupos')) : [];
+    let materias = localStorage.getItem('materias') ? JSON.parse(localStorage.getItem('materias')) : [];
 
     // Verificar si hay grupos o materias para mostrar
     if (grupos.length === 0) {
@@ -18,7 +18,7 @@ function addStudent() {
     let grupoOptions = grupos.map(grupo => `<option value="${grupo.id}">${grupo.nombre}</option>`).join('');
 
     // Crear las opciones del selector de materias
-    let materiaOptions = materias.map(materia => `<option value="${materia.id}">${materia.nombre}</option>`).join('');
+    let materiaOptions = materias.map(materia => `<option value="${materia.id}">${materia.nombre}</option>`).join(''); 
 
     // Abrir SweetAlert para agregar un estudiante
     Swal.fire({
@@ -60,8 +60,10 @@ function addStudent() {
                 return false;
             }
 
+            // Obtener estudiantes de localStorage de forma segura
+            let students = localStorage.getItem('students') ? JSON.parse(localStorage.getItem('students')) : [];
+
             // Generar un ID único para el estudiante
-            let students = JSON.parse(localStorage.getItem('students')) || [];
             const studentId = students.length > 0 ? students[students.length - 1].id + 1 : 1; // Generar ID basado en el último estudiante
 
             // Crear objeto del estudiante

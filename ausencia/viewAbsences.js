@@ -1,9 +1,29 @@
 function viewAbsences(index) {
+    console.log("inicio "+index);
     const students = JSON.parse(localStorage.getItem('students')) || [];
-    const student = students[index];
 
-    // Obtener todas las materias del estudiante
-    const materias = [...new Set(student.absences.map(absence => absence.materia))];
+    console.log(students);
+    //const student = students[index];
+    const studentData = students.find(s => s.id === studentId);
+    console.log("d2 "+studentData);
+    console.log("fin ");
+    // Verificar si la propiedad 'absences' existe en el estudiante
+    if (!student || !student.absences || student.absences.length === 0) {
+        Swal.fire('Error', 'Este estudiante no tiene ausencias registradas.', 'error');
+        return; // Salir si no hay información válida
+    }
+
+    // Obtener todas las materias de las ausencias del estudiante (usando materiaId)
+    const materias = [...new Set(student.absences.map(absence => absence.materiaId))];
+
+    // Obtener la lista de todas las materias desde localStorage
+    const materiasList = JSON.parse(localStorage.getItem('materias')) || [];
+
+    // Mapear los materiaId a sus nombres correspondientes
+    const materiaNames = materias.map(materiaId => {
+        const materia = materiasList.find(m => m.id === parseInt(materiaId));
+        return materia ? materia.nombre : `Materia desconocida ${materiaId}`;
+    });
 
     // Mostrar Swal para seleccionar la materia con el nombre del estudiante en el título
     Swal.fire({
@@ -11,7 +31,7 @@ function viewAbsences(index) {
         html: `
             <select id="materiaSelect" class="swal2-input">
                 <option value="">Seleccione una materia</option>
-                ${materias.map(materia => `<option value="${materia}">${materia}</option>`).join('')}
+                ${materiaNames.map(materia => `<option value="${materia}">${materia}</option>`).join('')}
             </select>
         `,
         focusConfirm: false,
@@ -30,7 +50,10 @@ function viewAbsences(index) {
             const selectedMateria = result.value;
 
             // Filtrar las ausencias por la materia seleccionada
-            const filteredAbsences = student.absences.filter(absence => absence.materia === selectedMateria);
+            const filteredAbsences = student.absences.filter(absence => {
+                const materia = materiasList.find(m => m.id === parseInt(absence.materiaId));
+                return materia ? materia.nombre === selectedMateria : false;
+            });
 
             if (filteredAbsences.length === 0) {
                 Swal.fire('No hay ausencias registradas', 'Este estudiante no tiene ausencias registradas para esta materia.', 'info');
@@ -43,7 +66,7 @@ function viewAbsences(index) {
                             <tr>
                                 <th>Fecha</th>
                                 <th>Tipo</th>
-                                <th>Acción</th> <!-- Eliminar columna de Materia -->
+                                <th>Acción</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,7 +79,7 @@ function viewAbsences(index) {
                             <td>${absence.type}</td>
                             <td>
                                 <button class="btn btn-success btn-sm" onclick="editAbsence(${index}, ${absenceIndex})">
-                                ✏️ </button>
+                                    ✏️ </button>
                                 <button class="btn btn-danger btn-sm" onclick="deleteAbsence(${index}, ${absenceIndex})">X</button>
                             </td>
                         </tr>
@@ -68,9 +91,9 @@ function viewAbsences(index) {
                 Swal.fire({
                     title: `Informe de Ausencias de ${student.name} ${student.surname} - ${selectedMateria}`,
                     html: absenceDetails,
-                    showCancelButton: true,  // Habilitar el botón de cancelar
-                    cancelButtonText: 'Cancelar',  // Texto del botón de cancelar
-                    focusConfirm: false  // Prevenir que el botón de confirmación se enfoque
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancelar',
+                    focusConfirm: false
                 });
             }
         }
