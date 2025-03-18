@@ -19,9 +19,7 @@ function registerAbsence(studentId) {
     console.log('idMateria:', idMateria);
     console.log('idGrupo:', idGrupo);
 
-    // Buscar la materia correspondiente
     const materia = materias.find(m => m.id === idMateria);
-    // Buscar el grupo correspondiente
     const grupo = grupos.find(g => g.id === idGrupo);
 
     console.log('materias:', materias);
@@ -42,7 +40,6 @@ function registerAbsence(studentId) {
     // Obtener la fecha actual en formato YYYY-MM-DD
     const currentDate = new Date().toISOString().split('T')[0];
 
-    // Mostrar la alerta con opciones de ausencia
     Swal.fire({
         html: `
         <h5>Registrar Ausencia:</h5>
@@ -59,21 +56,26 @@ function registerAbsence(studentId) {
                 <option value="tardía">Llegó tarde a clases</option>
             </select>
         `,
-      
         showCancelButton: true,
         confirmButtonText: 'Guardar',
         preConfirm: () => {
             const absenceType = document.getElementById('absenceType').value;
             console.log('Tipo de ausencia seleccionada:', absenceType);
 
-            // Buscar al estudiante y agregar la ausencia con materiaId, grupoId y la fecha
+            // Obtener el último ID de ausencia del estudiante y asignar el siguiente
+            const lastAbsenceId = student.absences?.length ? Math.max(...student.absences.map(a => a.id)) : 0;
+            const newAbsenceId = lastAbsenceId + 1;
+
+            // Agregar la ausencia con un ID autoincrementado
             const updatedStudents = students.map(s => {
                 if (s.id === studentId) {
+                    s.absences = s.absences || []; // Asegurar que la propiedad absences existe
                     s.absences.push({
+                        id: newAbsenceId,   // Nuevo ID autoincremental
                         type: absenceType,
-                        materiaId: materia.id,   // Guardar el materiaId
-                        grupoId: grupo.id,       // Guardar el grupoId
-                        date: currentDate        // Agregar la fecha de la ausencia
+                        materiaId: materia.id,   
+                        grupoId: grupo.id,       
+                        date: currentDate        
                     });
                 }
                 return s;

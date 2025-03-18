@@ -55,12 +55,12 @@ function viewAbsences(index) {
         student.absences.forEach((absence, absenceIndex) => {
             absenceDetails += `
                 <tr>
-                    <td>${absence.date}</td>
+                    <td>${absence.date} </td>
                     <td>${absence.type}</td>
                     <td>
-                        <button class="btn btn-success btn-sm" onclick="editAbsence(${index}, ${absenceIndex})">
+                        <button class="btn btn-success btn-sm" onclick="editAbsence(${index}, ${absenceIndex}, ${absence.id})">
                             ✏️ </button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteAbsence(${index}, ${absenceIndex})">X</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteAbsence(${index},  ${absence.id})">X</button>
                     </td>
                 </tr>
             `;
