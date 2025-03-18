@@ -26,7 +26,7 @@ function loadStudents() {
 
                 <br>
                 <div class="p-2 btn-group" role="group" aria-label="Basic example">
-                    <button type="button" class="btn btn-primary" onclick="registerAbsence(${student.id})">${student.id} -Registrar Ausencia</button>
+                    <button type="button" class="btn btn-primary" onclick="registerAbsence(${student.id})"> Ausencia</button>
                     <button type="button" class="btn btn-primary" onclick="viewAbsences(${student.id})">Informe</button>
                 </div>
 

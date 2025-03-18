@@ -1,79 +1,89 @@
 function informeTrabajoCotidiano(index) {
+    console.log("informeTrabajoCotidiano " + index);
+
     const students = JSON.parse(localStorage.getItem('students')) || [];
-    const student = students[index];
+    const grupos = JSON.parse(localStorage.getItem('grupos')) || [];
+    let nombreGrupo = "";
+    console.log("grupos ", grupos);
 
-    // Obtener las materias del localStorage
-    const materias = JSON.parse(localStorage.getItem('materias')) || [];
+    // Filtrar el grupo por ID
+    const grupo = grupos.find(gr => gr.id === index);
+    if (grupo) {
+        nombreGrupo = grupo.nombre;
+        console.log(`Grupo encontrado: ID = ${grupo.id}, Nombre = ${grupo.nombre}`);
+    } else {
+        alert("No encontrado");
+        console.log("Grupo no encontrado");
+        return;
+    }
 
-    // Mostrar Swal para seleccionar la materia con el nombre del estudiante en el título
-    Swal.fire({
-        title: `Seleccione la Materia de ${student.name} ${student.surname}`,
-        html: `
-            <select id="materiaSelect" class="swal2-input">
-                <option value="">Seleccione una materia</option>
-                ${materias.map(materia => `<option value="${materia}">${materia}</option>`).join('')}
-            </select>
-        `,
-        focusConfirm: false,
-        showCancelButton: true,
-        cancelButtonText: 'Cancelar',
-        preConfirm: () => {
-            const selectedMateria = document.getElementById('materiaSelect').value;
-            if (!selectedMateria) {
-                Swal.showValidationMessage('Por favor seleccione una materia.');
-                return false;
+    // Filtrar el estudiante por ID
+    const student = students.find(st => st.id === index);
+    if (student) {
+        console.log("ID:", student.id);
+        console.log("Nombre:", student.name);
+        console.log("Cédula:", student.cedula);
+        console.log("trabajoCotidiano:", student.trabajoCotidiano);
+        console.log("materiaID:", student.materiaId);
+
+        const materia = JSON.parse(localStorage.getItem('materias')) || [];
+        const materias = materia.find(m => m.id === student.materiaId);
+       
+     //   nomBreMateria = materias.nombre;
+        console.log("nomBreMateria");
+
+        // Crear el contenido HTML para la tabla de trabajo cotidiano
+        let trabajoCotidianoDetails = `
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th>Detalle</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        // Mostrar los registros de trabajo cotidiano del estudiante en la tabla
+        student.trabajoCotidiano.forEach((trabajo, trabajoIndex) => {
+            trabajoCotidianoDetails += `
+                <tr>
+                    <td>${trabajo.date}</td>
+                    <td>${trabajo.type}</td>
+                    <td>${trabajo.detail ? trabajo.detail : 'No disponible'}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="eliminarTrabajoCotidiano(${trabajoIndex}, ${student.id})">X</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        trabajoCotidianoDetails += `</tbody></table>`;
+
+        // Mostrar SweetAlert2 con los datos del estudiante, el grupo, y el trabajo cotidiano
+        Swal.fire({
+            html: `
+                <br>
+                  <h5>Trabajo Cotidiano.</h5>
+                     <h5>Estudiante: ${student.name}</h5>
+                  <h5> Grupo: ${nombreGrupo}</h5>
+                 <h5>Materia ${nomBreMateria}</h5>
+                ${trabajoCotidianoDetails}
+            `,
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            focusConfirm: false
+        }).then(result => {
+            if (result.isConfirmed) {
+                // Acción adicional si es necesario
+                Swal.fire('Acción confirmada', 'Has revisado el trabajo cotidiano del estudiante.', 'success');
             }
-            return selectedMateria;
-        }
-    }).then(result => {
-        if (result.isConfirmed) {
-            const selectedMateria = result.value;
-
-            // Filtrar los trabajos cotidianos por la materia seleccionada
-            const trabajosCotidianos = student.trabajoCotidiano || [];
-            const filteredTrabajoCotidiano = trabajosCotidianos.filter(work => work.materia === selectedMateria);
-
-            if (filteredTrabajoCotidiano.length === 0) {
-                Swal.fire('No hay registros', 'Este estudiante no tiene trabajos cotidianos registrados para esta materia.', 'info');
-            } else {
-                let trabajoCotidianoDetails = `
-                    <button class="btn btn-info mb-3" onclick="copyStudentData(${index})">Pasar a Excel</button>
-                    <button class="btn btn-info mb-3" onclick="copyStudentPadre(${index})">Informe al padre</button>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Tipo</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-
-                filteredTrabajoCotidiano.forEach((work, workIndex) => {
-                    trabajoCotidianoDetails += `
-                        <tr>
-                            <td>${work.date}</td>
-                            <td>${work.type}</td>
-                            <td>
-                                <button class="btn btn-success btn-sm" onclick="editTrabajoCotidiano(${index}, ${workIndex})">
-                                ✏️ </button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteTrabajoCotidiano(${index}, ${workIndex})">X</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                trabajoCotidianoDetails += `</tbody></table>`;
-
-                Swal.fire({
-                    title: `Informe de Trabajo Cotidiano de ${student.name} ${student.surname} - ${selectedMateria}`,
-                    html: trabajoCotidianoDetails,
-                    showCancelButton: true,
-                    cancelButtonText: 'Cancelar',
-                    focusConfirm: false
-                });
-            }
-        }
-    });
+        });
+    } else {
+        alert("No encontrado");
+        console.log("Estudiante no encontrado");
+    }
 }
+

@@ -37,17 +37,41 @@ function registerAbsence(studentId) {
         return;
     }
 
-    // Obtener la fecha actual en formato YYYY-MM-DD
-    const currentDate = new Date().toISOString().split('T')[0];
+    // Obtener la fecha actual
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth(); // Mes actual
+    const currentYear = currentDate.getFullYear(); // Año actual
+    const currentDay = currentDate.getDate(); // Día actual
+
+    // Generar un array de fechas del mes
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate(); // Número de días del mes
+    const dateOptions = [];
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        // Crear una opción para cada día del mes
+        const date = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        dateOptions.push(date);
+    }
+
+    // Establecer la fecha actual como valor por defecto
+    const defaultDate = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${currentDay.toString().padStart(2, '0')}`;
 
     Swal.fire({
         html: `
         <h5>Registrar Ausencia:</h5>
-            <strong>Estudiante:</strong><br>
+            <strong> Estudiante: </strong><br>
             Nombre: ${student.name}<br>
             ID: ${student.id}<br>
             Grupo: ${grupo.nombre}<br>
             Materia: ${materia.nombre}<br><br>
+            <label for="absenceDate">Seleccionar fecha:</label>
+            <br>
+            <select id="absenceDate" class="form-select">
+                ${dateOptions.map(date => 
+                    `<option value="${date}" ${date === defaultDate ? 'selected' : ''}>${date}</option>`
+                ).join('')}
+            </select>
+            <br><br>
             <label for="absenceType">Seleccionar tipo de ausencia:</label>
             <br>
             <select id="absenceType" class="form-select">
@@ -59,7 +83,9 @@ function registerAbsence(studentId) {
         showCancelButton: true,
         confirmButtonText: 'Guardar',
         preConfirm: () => {
+            const absenceDate = document.getElementById('absenceDate').value;
             const absenceType = document.getElementById('absenceType').value;
+            console.log('Fecha de ausencia:', absenceDate);
             console.log('Tipo de ausencia seleccionada:', absenceType);
 
             // Obtener el último ID de ausencia del estudiante y asignar el siguiente
@@ -75,7 +101,7 @@ function registerAbsence(studentId) {
                         type: absenceType,
                         materiaId: materia.id,   
                         grupoId: grupo.id,       
-                        date: currentDate        
+                        date: absenceDate        
                     });
                 }
                 return s;
