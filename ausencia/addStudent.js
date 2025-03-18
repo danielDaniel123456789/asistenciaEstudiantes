@@ -26,11 +26,13 @@ function addStudent() {
         html: `
             <input id="studentName" class="swal2-input" placeholder="Nombre">
             <input id="studentCedula" class="swal2-input" placeholder="Cédula (opcional)" type="text">
-            <select id="studentGroup" class="swal2-input">
+            <br> <br>
+            <select id="studentGroup" class="form-select">
                 <option value="" disabled selected>Selecciona un grupo</option>
                 ${grupoOptions}
             </select>
-            <select id="studentMateria" class="swal2-input">
+            <br>
+            <select id="studentMateria" class="form-select">
                 <option value="" disabled selected>Selecciona una materia</option>
                 ${materiaOptions}
             </select>
@@ -77,6 +79,12 @@ function addStudent() {
             };
 
             saveStudent(student);
+
+            Swal.fire({
+                title: "Insertado",
+                text: "Estudiante agregado correctamente",
+                icon: "success"
+              });
         }
     });
 }

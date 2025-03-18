@@ -1,6 +1,12 @@
 function editStudent(index) {
     const students = JSON.parse(localStorage.getItem('students')) || [];
     const student = students[index];
+    console.log("ID:", student.id);
+    console.log("Nombre:", student.name);   
+    console.log("Cédula:", student.cedula);
+    console.log("Materia ID:", student.materiaId);
+    console.log("Grupo ID:", student.groupId);
+
 
     // Cargar los grupos y materias desde localStorage
     const groups = JSON.parse(localStorage.getItem('grupos')) || [];  // Cargamos los grupos
