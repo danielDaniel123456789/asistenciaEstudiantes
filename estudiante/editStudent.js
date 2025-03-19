@@ -7,7 +7,6 @@ function editStudent(index) {
     console.log("Materia ID:", student.materiaId);
     console.log("Grupo ID:", student.groupId);
 
-
     // Cargar los grupos y materias desde localStorage
     const groups = JSON.parse(localStorage.getItem('grupos')) || [];  // Cargamos los grupos
     const materias = JSON.parse(localStorage.getItem('materias')) || [];  // Cargamos las materias
@@ -29,8 +28,7 @@ function editStudent(index) {
     // Mostrar formulario de edición utilizando Swal
     Swal.fire({
         title: `Editar Estudiante - Grupo: ${currentGroup} | Materia: ${currentMateria}`,  // Mostrar grupo y materia en el título
-        html: `
-            <br><br><br>
+        html: `   
             <label for="studentName">Nombre *</label>
             <input id="studentName" class="swal2-input" value="${student.name}" placeholder="Nombre">
             <br><br><br>
@@ -46,6 +44,8 @@ function editStudent(index) {
             <select id="materiaselect" class="swal2-input">
                 ${subjectOptions}
             </select>
+            <br><br><br>
+            <button class="swal2-confirm swal2-styled" onclick="deleteStudent(${index})">Eliminar Estudiante</button>
         `,
         focusConfirm: false,
         showCancelButton: true,
@@ -76,3 +76,4 @@ function editStudent(index) {
         }
     });
 }
+
