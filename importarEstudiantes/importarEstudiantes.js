@@ -93,15 +93,16 @@ function importarEstudiantes() {
                 id: nextId + index, // Asignar el ID incrementado
                 name,
                 cedula: cedulas[index],
-                absences: [],
+                absences: [], // Asegura que las ausencias estén vacías inicialmente
                 materiaId: selectedMateria, // Asociamos la materia seleccionada
-                trabajoCotidiano: [],
+                trabajoCotidiano: [], // Asegura que el trabajo cotidiano esté vacío inicialmente
                 groupId: selectedGroup // Asociamos el estudiante con el grupo seleccionado
             }));
 
             // Fusionar los estudiantes existentes con los nuevos
             const updatedStudents = [...existingStudents, ...newStudents];
 
+            // Guardar los estudiantes en el localStorage
             localStorage.setItem("students", JSON.stringify(updatedStudents));
             Swal.fire("Éxito", "Estudiantes importados correctamente.", "success");
             loadStudents(); // Recargar la lista

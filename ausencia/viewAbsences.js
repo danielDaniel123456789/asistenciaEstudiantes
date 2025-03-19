@@ -1,5 +1,5 @@
 function viewAbsences(index) {
-    console.log("inicio " + index);
+    console.log("Índice recibido:", index);
     const students = JSON.parse(localStorage.getItem('students')) || [];
     const grupos = JSON.parse(localStorage.getItem('grupos')) || [];
     nombreGrupo ="";
