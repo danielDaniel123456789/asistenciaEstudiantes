@@ -1,4 +1,6 @@
+
 function registerAbsence(studentId) {
+    console.log('studentId-----------:', studentId);
     const students = JSON.parse(localStorage.getItem('students')) || [];
     const materias = JSON.parse(localStorage.getItem('materias')) || [];
     const grupos = JSON.parse(localStorage.getItem('grupos')) || [];
@@ -10,7 +12,7 @@ function registerAbsence(studentId) {
         return;
     }
 
-    console.log('student:', student);
+    console.log('student-----------:', student);
     
     const idEstudiante = student.id;
     const idMateria = Number(student.materiaId); // Convertir a número
