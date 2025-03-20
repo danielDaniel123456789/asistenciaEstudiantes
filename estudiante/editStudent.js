@@ -40,43 +40,36 @@ function editStudent(studentId) {
 
     // Mostrar formulario de edición con Swal
     Swal.fire({
-        title: `Editar Estudiante - Grupo: ${currentGroup} | Materia: ${currentMateria}`,  
-        html: `   
-
-        <div class="p-2">
-         <label for="studentName">Nombre *</label>
-            <input id="studentName" class="swal2-input" value="${student.name}" placeholder="Nombre">
-        </div>
-
-         <div class="p-2">
-
-             <label for="studentCedula">Cédula (opcional)</label>
-            <input id="studentCedula" class="swal2-input" value="${student.cedula || ''}" placeholder="Cédula" type="text">
-     
-        </div>
-
-
-         <div class="p-2">
-          <label for="groupSelect">Grupo *</label>
-            <select id="groupSelect" class="form-select">
-                ${groupOptions}
-            </select>
-        </div>
-
-         <div class="p-2">
-           <label for="materiaSelect">Materia *</label>
-            <select id="materiaSelect" class="form-select">
-                ${subjectOptions}
-            </select>
-        </div>
-           
-           <div class="p-2">
-                <button class="swal2-confirm swal2-styled" onclick="deleteStudent(${studentId})">Eliminar Estudiante</button>
-     
-                </div>
-        
-          
-       `,
+        html: `  
+        <div class="p-4">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <button onclick="deleteStudent(${studentId})" class="swal2-cancel swal2-styled btn-danger" >🗑️ Eliminar</button>
+                <button class="swal2-close" onclick="Swal.close()" >&times;</button>
+            </div>
+            <h4>Editar Estudiante</h4>
+            <h4>Grupo: ${currentGroup} </h4>
+            <h4>Materia: ${currentMateria}</h4>
+            <div class="p-2">
+                <h6 for="studentName">Nombre *</h6>
+                <input id="studentName" class="swal2-input" value="${student.name}" placeholder="Nombre">
+            </div>
+            <div class="p-2">
+                <h6 for="studentCedula">Cédula (opcional)</h6>
+                <input id="studentCedula" class="swal2-input" value="${student.cedula || ''}" placeholder="Cédula" type="text">
+            </div>
+            <div class="p-2">
+                <label for="groupSelect">Grupo *</label>
+                <select id="groupSelect" class="form-select">
+                    ${groupOptions}
+                </select>
+            </div>
+            <div class="p-2">
+                <label for="materiaSelect">Materia *</label>
+                <select id="materiaSelect" class="form-select">
+                    ${subjectOptions}
+                </select>
+            </div>
+        </div>`,
         focusConfirm: false,
         showCancelButton: true,
         cancelButtonText: 'Cancelar',
