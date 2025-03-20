@@ -21,7 +21,7 @@ function loadStudents(students = null) {
                         ✏️
                         <!-- Carácter de lápiz -->
                     </button>
-                    ${capitalizeFirstLetter(student.name)} --${student.id}
+                    ${capitalizeWords(student.name)} --${student.id}
                 </h5>
                 <p class="card-text">Cédula: ${student.cedula || 'No disponible'}</p> <!-- Mostrar cédula -->
 
