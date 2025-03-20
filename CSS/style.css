@@ -52,12 +52,7 @@ div:where(.swal2-container) div:where(.swal2-html-container) {
           .swal2-container.swal2-center.swal2-backdrop-show {
       background-color: #343a40;
   }
-  
-  select#materiaSelect {
-      background-color: #343a40;
-      color: white;
-      border-radius: 8px;
-  }
+
   
   /* Botón de cierre en la esquina */
   .swal-close-btn {
