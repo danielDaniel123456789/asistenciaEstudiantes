@@ -83,8 +83,37 @@ function informeTrabajoCotidiano() {
                         return;
                     }
 
+                    // Obtener la cantidad máxima de valores en trabajoCotidiano
+const maxValores = Math.max(...estudiantesFiltrados.map(est => est.trabajoCotidiano.length));
+
+// Crear la tabla
+let estudiantesHTML = '<table class="table p-2">';
+estudiantesHTML += '<thead><tr><th>Nombre</th>';
+
+// Agregar columnas según la cantidad máxima de valores
+for (let i = 0; i < maxValores; i++) {
+    estudiantesHTML += `<th>✔️</th>`;
+}
+estudiantesHTML += '</tr></thead><tbody>';
+
+// Generar filas con los valores o colocar "?" en rojo si faltan valores
+estudiantesFiltrados.forEach(estudiante => {
+    estudiantesHTML += `<tr><i class="fa fa-bullhorn" aria-hidden="true"></i> <td>${estudiante.name}</td>`;
+
+    // Agregar valores de trabajo o "?" si faltan
+    for (let i = 0; i < maxValores; i++) {
+        const valor = estudiante.trabajoCotidiano[i]?.type || '<span style="color: red;">?</span>';
+        estudiantesHTML += `<td>${valor}</td>`;
+    }
+
+    estudiantesHTML += '</tr>';
+});
+
+estudiantesHTML += '</tbody></table>';
+
+/*
                     // Crear el HTML para mostrar los estudiantes filtrados
-                    let estudiantesHTML = '<table style="width: 100%; text-align: left; border-collapse: collapse;">';
+                    let estudiantesHTML = '<table class="table p-2"';
                     estudiantesHTML += '<thead><tr><th>Nombre</th><th>Puntos</th></tr></thead><tbody>';
 
                     estudiantesFiltrados.forEach(estudiante => {
@@ -102,40 +131,55 @@ function informeTrabajoCotidiano() {
 
                     estudiantesHTML += '</tbody></table>';
 
+                    */
+
                     // Mostrar el tercer modal con SweetAlert2 para ver la lista de estudiantes
                     Swal.fire({
                         html: `
+
+                        <div id="footerCopiado" class="p-4 bg-warning text-center" Style="display:none">
+                    <h3>Coopiado, pegalo en tu grupo de whatsApp </h3>
+<i class="fa fa-cog fa-spin fa-3x fa-fw"></i>
+<span class="sr-only">Loading...</span>
+                        </div>
                             <div>${estudiantesHTML}</div>
-                            <button id="copiarNombresBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;"> copiarNombresBtn</button>
-                                     <button id="copiarTiposBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;">copiarTiposBtn</button>
+                            <button id="copiarNombresBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;"> Copiar Nombres</button>
+                                     <button id="copiarTiposBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;">Copiar puntuaje</button>
              
                             `,
+                            showCloseButton: true,
                         showCancelButton: true,
                         cancelButtonText: 'Cancelar',
+                        showCancelButton: true,
                     });
 
-                    // Lógica para el botón Copiar Informe
                     document.getElementById('copiarNombresBtn').addEventListener('click', () => {
                         const filas = document.querySelectorAll('table tbody tr'); 
                         let textoCopiar = '';
                     
                         filas.forEach(fila => {
-                            const nombre = fila.querySelector('td:first-child').innerText; // Solo extraemos la primera columna (nombre)
-                            textoCopiar += nombre + '\n'; // Agregamos nueva línea por cada nombre
+                            const nombre = fila.querySelector('td:first-child').innerText; // Extraer la primera columna (nombre)
+                            textoCopiar += nombre + '\n'; // Agregar nueva línea por cada nombre
                         });
                     
                         navigator.clipboard.writeText(textoCopiar).then(() => {
-                            Swal.fire('Copiado', 'Los nombres han sido copiados al portapapeles', 'success');
+                            const footer = document.getElementById('footerCopiado');
+                            if (footer) {
+                                footer.style.display = 'block'; // Mostrar el footer
+                                setTimeout(() => {
+                                    footer.style.display = 'none'; // Ocultar el footer después de 4 segundos
+                                }, 4000);
+                            }
                         }).catch(err => {
                             Swal.fire('Error', 'No se pudieron copiar los nombres', 'error');
                         });
                     });
                     
                     
+                    
             
 
 // Copiar los nombres y tipos de trabajo con tabuladores como delimitador de columna
-// Copiar solo los tipos de trabajo con tabuladores como delimitador de columna
 document.getElementById('copiarTiposBtn').addEventListener('click', () => {
     const tiposTrabajoTexto = estudiantesFiltrados.map(estudiante => {
         // Obtener los tipos de trabajo del estudiante
@@ -149,11 +193,19 @@ document.getElementById('copiarTiposBtn').addEventListener('click', () => {
     
     // Copiar al portapapeles
     navigator.clipboard.writeText(tiposTrabajoTexto).then(() => {
-        Swal.fire('Copiado', 'Los tipos de trabajo han sido copiados al portapapeles', 'success');
+        // Mostrar el div con id "footerCopiado"
+        const footerCopiado = document.getElementById('footerCopiado');
+        footerCopiado.style.display = 'block'; // Mostrarlo
+
+        // Ocultar el footer después de 4 segundos
+        setTimeout(() => {
+            footerCopiado.style.display = 'none';
+        }, 4000);
     }).catch(err => {
         Swal.fire('Error', 'No se pudieron copiar los tipos de trabajo', 'error');
     });
 });
+
 
 
 
