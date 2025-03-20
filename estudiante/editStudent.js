@@ -51,11 +51,11 @@ function editStudent(studentId) {
             <h4>Materia: ${currentMateria}</h4>
             <div class="p-2">
                 <h6 for="studentName">Nombre *</h6>
-                <input id="studentName" class="swal2-input" value="${student.name}" placeholder="Nombre">
+                <input id="studentName" class="form-control" value="${student.name}" placeholder="Nombre">
             </div>
             <div class="p-2">
                 <h6 for="studentCedula">Cédula (opcional)</h6>
-                <input id="studentCedula" class="swal2-input" value="${student.cedula || ''}" placeholder="Cédula" type="text">
+                <input id="studentCedula" class="form-control" value="${student.cedula || ''}" placeholder="Cédula" type="text">
             </div>
             <div class="p-2">
                 <label for="groupSelect">Grupo *</label>

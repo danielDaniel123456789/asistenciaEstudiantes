@@ -45,10 +45,14 @@
      <script src="formato/capitalizeWords.js"></script>
      <script src="formato/generateId.js"></script>
      <script src="estudiante/deleteStudent.js"></script>
+     <script src="informe/informeTrabajoCotidiano.js"></script>
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   />
   <link rel="stylesheet" href="CSS/style.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+
    
 </head>
 <body>
@@ -57,6 +61,8 @@
     <div id="listaEstudiantes">
         <div class="container text-center">
             <h3 class="my-4 text-white">Control de Ausencias</h3>
+
+            <a href="#" onclick="informeTrabajoCotidiano()">Calculo trabajo cotidiano</a>
             <input type="text" id="nombreLocalStore" placeholder="Nombre de LocalStorage">
             <input type="number" id="id" placeholder="ID">
             <button onclick="cargarDatos()">Buscar</button>

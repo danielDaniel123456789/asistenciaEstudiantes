@@ -55,10 +55,10 @@ function trabajoCotidiano(studentId) {
         <br>
         <label for="trabajoType">Seleccionar desempeño:</label>
         <select id="trabajoType" class="swal-input">
-            <option value="No participó">No participó</option>
-            <option value="Baja participación">Baja participación</option>
-            <option value="Participación parcial">Participación parcial</option>
-            <option value="Participación activa">Participación activa</option>
+            <option value="0">No participó</option>
+            <option value="1">Baja participación</option>
+            <option value="2">Participación parcial</option>
+            <option value="3">Participación activa</option>
         </select>
         <br>
         <label for="trabajoDetail">Detalles (opcional):</label>
