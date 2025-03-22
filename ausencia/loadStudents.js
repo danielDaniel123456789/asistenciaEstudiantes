@@ -33,7 +33,13 @@ function loadStudents(students = null) {
 
                 <div class="p-2 btn-group" role="group" aria-label="Basic example">
                     <button type="button" class="btn btn-primary" onclick="trabajoCotidiano(${student.id})">Cotidiano</button>
-                    <button type="button" class="btn btn-primary" onclick="informeTrabajoCotidiano(${student.id})">Informe</button>
+                    <button type="button" class="btn btn-primary" onclick="resumeCotidiano(${student.id})">Informe</button>
+                </div>
+
+
+                 <div class="p-2 btn-group" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-primary" onclick="registrarTarea(${student.id})">tareas</button>
+                    <button type="button" class="btn btn-primary" onclick="viewTasks(${student.id})">resumeTareas</button>
                 </div>
             </div>
         </div>
