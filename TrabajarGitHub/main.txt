@@ -1,5 +1,4 @@
-Para subir los cambios de la rama tester01 a la rama main
-
+la  rama tester01-->le cae a la rama -->main
 ----------------------------------------------
 Primero, asegúrate de estar en la rama main:
 git checkout main
