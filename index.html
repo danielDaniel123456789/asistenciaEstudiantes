@@ -29,12 +29,12 @@
     <script src="ausencia/viewAbsencesRecargar.js"></script>
     <script src="ausencia/usuarioRegistrado.js"></script>
     <script src="ausencia/clavesRegistro.js"></script>
-    <script src="cotidiano/informeTrabajoCotidiano.js"></script>
+
     <script src="cotidiano/trabajoCotidiano.js"></script>
     <script src="cotidiano/abrirInformeCotidiano.js"></script>
     <script src="cotidiano/eliminarTrabajoCotidiano.js"></script>
     <script src="cotidiano/resumeCotidiano.js"></script>
-    
+
     <script src="cotidiano/deleteTrabajoCotidiano.js"></script>
     <script src="cotidiano/editTrabajoCotidiano.js"></script>
     <script src="importarEstudiantes/importarEstudiantes.js"></script>
@@ -46,9 +46,10 @@
      <script src="formato/capitalizeWords.js"></script>
      <script src="formato/generateId.js"></script>
      <script src="estudiante/deleteStudent.js"></script>
-     <script src="informe/informeTrabajoCotidiano.js"></script>
+     <script src="cotidiano/informeTrabajoCotidiano.js"></script>
      <script src="tareas/resumenTares.js"></script>
      <script src="tareas/registrarTareas.js"></script>
+     <script src="tareas/informeGeneralTareas.js"></script>
      <script src="tareas/viewTasks.js"></script>
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
@@ -67,6 +68,7 @@
             <h3 class="my-4 text-white">Control de Ausencias</h3>
 
             <a href="#" onclick="informeTrabajoCotidiano()">Calculo trabajo cotidiano</a>
+            <a href="#" onclick="informeGeneralTareas()">informeGeneralTareas</a>
             <input type="text" id="nombreLocalStore" placeholder="Nombre de LocalStorage">
             <input type="number" id="id" placeholder="ID">
             <button onclick="cargarDatos()">Buscar</button>

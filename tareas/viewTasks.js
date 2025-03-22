@@ -2,18 +2,11 @@ function viewTasks(studentId) {
     console.log("ID recibido:", studentId);
     const students = JSON.parse(localStorage.getItem('students')) || [];
     const grupos = JSON.parse(localStorage.getItem('grupos')) || [];
-    let nombreGrupo = "";
+    const materiasList = JSON.parse(localStorage.getItem('materias')) || [];
+    
+    let nombreGrupo = "Grupo no encontrado";
 
-    // Buscar el grupo del estudiante
-    for (let i = 0; i < grupos.length; i++) {
-        if (grupos[i].id == studentId) {
-            nombreGrupo = grupos[i].nombre;
-            console.log(`Grupo encontrado: ID = ${grupos[i].id}, Nombre = ${grupos[i].nombre}`);
-            break;
-        }
-    }
-
-    // Buscar al estudiante por ID
+    // Buscar el estudiante por ID
     const student = students.find(s => s.id == studentId);
 
     if (!student) {
@@ -24,33 +17,27 @@ function viewTasks(studentId) {
 
     console.log("Estudiante encontrado:", student);
 
-    // Obtener todas las materias desde localStorage
-    const materiasList = JSON.parse(localStorage.getItem('materias')) || [];
+    // Buscar el grupo del estudiante
+    const grupo = grupos.find(g => g.id == student.groupId);
+    if (grupo) {
+        nombreGrupo = grupo.nombre;
+    }
 
     // Verificar si el estudiante tiene tareas registradas
     if (!student.tareas || student.tareas.length === 0) {
-        Swal.fire('Sin Tareas', 'Este estudiante no tiene tareas asignadas.', 'info');
+        Swal.fire('Sin Tareas', `${student.name} no tiene tareas registradas.`, 'info');
         return;
     }
 
-    // Mapeamos los datos de tareas con sus respectivas materias
-    const tareaDetails = student.tareas.map(tarea => {
-        const materia = materiasList.find(m => m.id == tarea.materiaId);
-        return {
-            materia: materia ? materia.nombre : `Materia desconocida ${tarea.materiaId}`,
-            puntos: tarea.puntos || tarea.score || "N/A",
-            fechaEntrega: tarea.date
-        };
-    });
-
-    console.log("Tareas mapeadas:", tareaDetails);
+    // Obtener el nombre de la materia (usando la primera tarea como referencia)
+    const firstMateria = materiasList.find(m => m.id == student.tareas[0].materiaId);
+    const materiaNombre = firstMateria ? firstMateria.nombre : "Materia Desconocida";
 
     // Crear el contenido HTML para la tabla de tareas
     let taskDetails = `
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Materia</th>
                     <th>Puntos</th>
                     <th>Fecha de Entrega</th>
                 </tr>
@@ -58,12 +45,11 @@ function viewTasks(studentId) {
             <tbody>
     `;
 
-    tareaDetails.forEach(tarea => {
+    student.tareas.forEach(tarea => {
         taskDetails += `
             <tr>
-                <td>${tarea.materia}</td>
-                <td>${tarea.puntos}</td>
-                <td>${tarea.fechaEntrega}</td>
+                <td>${tarea.puntos || tarea.score || "N/A"}</td>
+                <td>${tarea.date}</td>
             </tr>
         `;
     });
@@ -74,7 +60,8 @@ function viewTasks(studentId) {
     Swal.fire({
         html: `
         <br>
-        <h5>Resumen de Tareas de ${student.name} - Grupo ${nombreGrupo}:</h5>
+        <h5>Resumen de Tareas - ${student.name}</h5>
+        <h6>Materia: ${materiaNombre} | Grupo: ${nombreGrupo}</h6>
         ${taskDetails}
         `,
         showCancelButton: true,
