@@ -1,4 +1,4 @@
-function calificarAsistenciaDelMes() {
+function calificarAsistenciaDelAyo() {
     // Cargar los grupos, materias y estudiantes desde el localStorage de forma segura
     let grupos = localStorage.getItem('grupos') ? JSON.parse(localStorage.getItem('grupos')) : [];
     let materias = localStorage.getItem('materias') ? JSON.parse(localStorage.getItem('materias')) : [];
@@ -26,13 +26,9 @@ function calificarAsistenciaDelMes() {
     // Crear las opciones del selector de materias
     let materiaOptions = materias.map(materia => `<option value="${materia.id}">${materia.nombre}</option>`).join('');
 
-    // Crear las opciones del selector de meses
-    const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-    let monthOptions = monthNames.map((month, index) => `<option value="${index}">${month}</option>`).join('');
-
-    // Abrir SweetAlert para calificar asistencia del mes
+    // Abrir SweetAlert para calificar asistencia del año
     Swal.fire({
-        title: 'Calificar Asistencia del Mes',
+        title: 'Calificar Asistencia del Año',
         html: ` 
             <select id="asistenciaGrupo" class="form-select">
                 <option value="" disabled selected>Selecciona un grupo</option>
@@ -43,11 +39,6 @@ function calificarAsistenciaDelMes() {
                 <option value="" disabled selected>Selecciona una materia</option>
                 ${materiaOptions}
             </select>
-            <br>
-            <select id="asistenciaMes" class="form-select">
-                <option value="" disabled selected>Selecciona un mes</option>
-                ${monthOptions}
-            </select>
         `,
         focusConfirm: false,
         showCancelButton: true,
@@ -57,11 +48,10 @@ function calificarAsistenciaDelMes() {
         preConfirm: () => {
             const groupId = document.getElementById('asistenciaGrupo').value;
             const materiaId = document.getElementById('asistenciaMateria').value;
-            const month = document.getElementById('asistenciaMes').value;
 
-            // Verificar que se haya seleccionado un grupo, materia y mes
-            if (!groupId || !materiaId || month === null) {
-                Swal.showValidationMessage('Debe seleccionar un grupo, una materia y un mes');
+            // Verificar que se haya seleccionado un grupo y materia
+            if (!groupId || !materiaId) {
+                Swal.showValidationMessage('Debe seleccionar un grupo y una materia');
                 return false;
             }
 
@@ -73,45 +63,32 @@ function calificarAsistenciaDelMes() {
                 return false;
             }
 
-            // Verificar si ya existe asistencia registrada para este mes
-            const monthNumber = parseInt(month) + 1; // Convertir a número de mes (1-12)
+            // Obtener el número de días de cada mes del año
             const currentYear = new Date().getFullYear();
-            
-            const hasExistingRecords = selectedStudents.some(student => {
-                return (student.absences || []).some(absence => {
-                    const absenceDate = new Date(absence.date);
-                    return absenceDate.getFullYear() === currentYear && 
-                           absenceDate.getMonth() + 1 === monthNumber &&
-                           absence.grupoId === groupId &&
-                           absence.materiaId === materiaId;
-                });
-            });
+            const datesInYear = [];
 
-            if (hasExistingRecords) {
-                Swal.showValidationMessage('Ya existe asistencia registrada para este mes, grupo y materia');
-                return false;
+            for (let m = 0; m < 12; m++) {
+                let monthDays = [];
+                let daysInMonth = new Date(currentYear, m + 1, 0).getDate();
+                for (let day = 1; day <= daysInMonth; day++) {
+                    monthDays.push(`${currentYear}-${(m + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
+                }
+                datesInYear.push({ month: m, days: monthDays });
             }
 
-            // Obtener el número de días del mes seleccionado
-            let daysInMonth = new Date(currentYear, monthNumber, 0).getDate();
-
-            // Crear las fechas del mes
-            const datesInMonth = [];
-            for (let day = 1; day <= daysInMonth; day++) {
-                datesInMonth.push(`${currentYear}-${monthNumber.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
-            }
-
-            // Asignar el valor "4" (presente) a todas las fechas de asistencia de los estudiantes seleccionados
+            // Asignar el valor "4" (presente) a todas las fechas de asistencia de los estudiantes seleccionados para todo el año
             selectedStudents.forEach(student => {
                 student.absences = student.absences || [];
                 
-                datesInMonth.forEach(date => {
-                    student.absences.push({
-                        id: Date.now() + Math.floor(Math.random() * 1000), // ID único
-                        type: "4", // Valor para "presente"
-                        materiaId: materiaId,
-                        grupoId: groupId,
-                        date: date
+                datesInYear.forEach(month => {
+                    month.days.forEach(date => {
+                        student.absences.push({
+                            id: Date.now() + Math.floor(Math.random() * 1000), // ID único
+                            type: "4", // Valor para "presente"
+                            materiaId: materiaId,
+                            grupoId: groupId,
+                            date: date
+                        });
                     });
                 });
             });
@@ -123,7 +100,7 @@ function calificarAsistenciaDelMes() {
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            Swal.fire('Guardado', 'Asistencia del mes registrada correctamente para todos los estudiantes', 'success');
+            Swal.fire('Guardado', 'Asistencia del año registrada correctamente para todos los estudiantes', 'success');
         }
     });
 }

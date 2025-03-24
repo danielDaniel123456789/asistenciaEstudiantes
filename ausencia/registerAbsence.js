@@ -71,8 +71,7 @@ for (let day = 1; day <= daysInMonth; day++) { // Crear una opción para cada d�
     <select id="absenceType" class="form-select">
         <option value="4">Presente</option>
         <option value="3">Ausencia Justificada</option>
-        <option value="3">Tardía Justificada</option>
-        <option value="2">Ausencia justificada</option>
+        <option value="2">Tardia justificada</option>
         <option value="1">Tardia no justificada 2=1 Ausencia </option>
   <option value="0">Ausencia no justificada</option>
     </select>

@@ -41,6 +41,18 @@ function viewAbsences(studentId) {
     // Obtener la primera materia del estudiante
     const selectedMateria = materiaNames[0] || 'Materia no disponible';
 
+    // Función para asignar el emoji según el tipo de ausencia
+    function getAbsenceEmoji(type) {
+        switch (type) {
+            case '4': return '✅'; // Presente
+            case '3': return '✔️'; // Ausencia Justificada
+            case '2': return '✔️'; // Tardía Justificada
+            case '1': return '⏰'; // Tardía no justificada
+            case '0': return '❌'; // Ausencia no justificada
+            default: return ''; // No definido
+        }
+    }
+
     // Crear el contenido HTML para la tabla de ausencias
     let absenceDetails = `
         <table class="table table-bordered">
@@ -48,6 +60,7 @@ function viewAbsences(studentId) {
                 <tr>
                     <th>Fecha</th>
                     <th>Tipo</th>
+                    <th>⚖️</th> <!-- Nueva columna para el emoji -->
                     <th>Acción</th>
                 </tr>
             </thead>
@@ -57,8 +70,9 @@ function viewAbsences(studentId) {
     student.absences.forEach((absence, absenceIndex) => {
         absenceDetails += `
             <tr>
-                <td>${absence.date} </td>
+                <td>${absence.date}</td>
                 <td>${absence.type}</td>
+                <td>${getAbsenceEmoji(absence.type)}</td> <!-- Mostrar el emoji -->
                 <td>
                     <button class="btn btn-success btn-sm" onclick="editAbsence(${studentId}, ${absenceIndex}, ${absence.id})">✏️</button>
                     <button class="btn btn-danger btn-sm" onclick="deleteAbsence(${studentId}, ${absence.id})">X</button>
@@ -73,6 +87,13 @@ function viewAbsences(studentId) {
     Swal.fire({
         html: `
         <br>
+        <h6> 
+            4: Presente ✅
+            3: Ausencia Justificada ✔️
+            2: Tardía justificada ✔️
+            1: Tardía no justificada 2=1 Ausencia ⏰
+            0: Ausencia no justificada ❌
+        </h6>
         <h5>Informe de Ausencias de ${student.name} - Materia: ${selectedMateria} - Grupo ${nombreGrupo}:</h5>
         ${absenceDetails}
         `,

@@ -25,13 +25,12 @@ function editAbsence(studentIndex, absenceIndex, absenceID) {
                         <strong>Tipo actual:</strong> ${getAbsenceTypeLabel(absence.type)} <br>
                         <label for="absenceType">Selecciona el nuevo tipo de ausencia:</label>
                         <select id="absenceType" class="form-select">
-                            <option value="4" ${absence.type === '4' ? 'selected' : ''}>Presente</option>
-                            <option value="3" ${absence.type === '3' ? 'selected' : ''}>Ausencia Justificada</option>
-                            <option value="3" ${absence.type === '3' ? 'selected' : ''}>Tardía Justificada</option>
-                            <option value="2" ${absence.type === '2' ? 'selected' : ''}>Ausencia justificada</option>
-                            <option value="1" ${absence.type === '1' ? 'selected' : ''}>Tardía no justificada (2=1 Ausencia)</option>
-                            <option value="0" ${absence.type === '0' ? 'selected' : ''}>Ausencia no justificada</option>
-                        </select>
+                     <option value="4" ${absence.type === '4' ? 'selected' : ''}>Presente ✅</option>
+<option value="3" ${absence.type === '3' ? 'selected' : ''}>Ausencia Justificada ✔️</option>
+<option value="2" ${absence.type === '2' ? 'selected' : ''}>Tardía Justificada ✔️</option>
+<option value="1" ${absence.type === '1' ? 'selected' : ''}>Tardía no justificada (2=1 Ausencia) ⏰</option>
+<option value="0" ${absence.type === '0' ? 'selected' : ''}>Ausencia no justificada ❌</option>
+ </select>
                     `,
                     showCancelButton: true,
                     confirmButtonText: 'Guardar',
