@@ -2,7 +2,7 @@ function informeMesAsistencia() {
     // Crear el array con los meses y los días que tienen
     const meses = [
         { id: 1, nombre: 'Enero', dias: 31 },
-        { id: 2, nombre: 'Febrero', dias: 28 }, // Febrero con 28 días (se ajustará más adelante)
+        { id: 2, nombre: 'Febrero', dias: 28 },
         { id: 3, nombre: 'Marzo', dias: 31 },
         { id: 4, nombre: 'Abril', dias: 30 },
         { id: 5, nombre: 'Mayo', dias: 31 },
@@ -40,34 +40,30 @@ function informeMesAsistencia() {
     }).then((result) => {
         if (result.isConfirmed) {
             const mesSeleccionado = parseInt(result.value);
-
-            // Obtener el número de días del mes seleccionado
             const mes = meses.find(m => m.id == mesSeleccionado);
             let diasMes = mes.dias;
 
             // Ajustar días para febrero en años bisiestos
-            if (mesSeleccionado == 2) { // Febrero
+            if (mesSeleccionado == 2) {
                 const añoActual = new Date().getFullYear();
                 if ((añoActual % 4 === 0 && añoActual % 100 !== 0) || (añoActual % 400 === 0)) {
-                    diasMes = 29; // Año bisiesto, 29 días en febrero
+                    diasMes = 29;
                 }
             }
 
             // Cargar los estudiantes desde localStorage
             const students = JSON.parse(localStorage.getItem('students')) || [];
 
-            // Filtrar estudiantes que tienen ausencias en el mes seleccionado
+            // Filtrar estudiantes con ausencias en el mes seleccionado
             const estudiantesFiltrados = students.filter(student => {
                 const ausencias = student.absences || [];
                 return ausencias.some(absence => {
-                    // Parsear la fecha correctamente (asegurarse de que el formato sea válido)
                     const dateParts = absence.date.split('-');
                     const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
                     return date.getMonth() + 1 === mesSeleccionado;
                 });
             });
 
-            // Verificar si hay estudiantes filtrados
             if (estudiantesFiltrados.length === 0) {
                 Swal.fire('No hay estudiantes', 'No se encontraron estudiantes con ausencias en este mes.', 'info');
                 return;
@@ -75,47 +71,87 @@ function informeMesAsistencia() {
 
             // Crear la tabla de asistencia
             let estudiantesHTML = '<table class="table p-2">';
-            estudiantesHTML += '<thead><tr><th>Nombre</th><th>Ausencias</th><th>Fechas</th></tr></thead><tbody>';
+            estudiantesHTML += '<thead><tr><th>Nombre</th><th>Ausencias</th></tr></thead><tbody>';
 
-            // Generar filas con las ausencias de los estudiantes
+            // Preparar datos para copiar
+            let nombresParaCopiar = [];
+            let ausenciasParaCopiar = [];
+
             estudiantesFiltrados.forEach(estudiante => {
                 estudiantesHTML += `<tr><td>${estudiante.name}</td>`;
 
-                // Filtrar las ausencias del estudiante para el mes seleccionado
+                // Filtrar y ordenar ausencias por día del mes
                 const ausenciasMes = (estudiante.absences || []).filter(absence => {
                     const dateParts = absence.date.split('-');
                     const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
                     return date.getMonth() + 1 === mesSeleccionado;
+                }).sort((a, b) => {
+                    const dateA = new Date(a.date);
+                    const dateB = new Date(b.date);
+                    return dateA - dateB;
                 });
 
-                // Preparar los datos para mostrar
-                const tiposAusencia = ausenciasMes.length > 0
+                // Crear array de ausencias ordenadas por día
+                const ausenciasPorDia = Array(diasMes).fill('');
+                ausenciasMes.forEach(absence => {
+                    const dateParts = absence.date.split('-');
+                    const dia = parseInt(dateParts[2]);
+                    ausenciasPorDia[dia - 1] = absence.type;
+                });
+
+                // Mostrar en tabla
+                const tiposAusencia = ausenciasMes.length > 0 
                     ? ausenciasMes.map(absence => absence.type).join(', ')
                     : 'No hay ausencias';
-                
-                const fechasAusencia = ausenciasMes.length > 0
-                    ? ausenciasMes.map(absence => {
-                        const dateParts = absence.date.split('-');
-                        return `${dateParts[2]}/${dateParts[1]}`; // Formato día/mes
-                    }).join(', ')
-                    : 'N/A';
 
-                estudiantesHTML += `<td>${tiposAusencia}</td><td>${fechasAusencia}</td></tr>`;
+                estudiantesHTML += `<td>${tiposAusencia}</td></tr>`;
+                
+                // Preparar datos para copiar
+                nombresParaCopiar.push(estudiante.name);
+                ausenciasParaCopiar.push(ausenciasPorDia.join(','));
             });
 
             estudiantesHTML += '</tbody></table>';
 
-            // Mostrar el modal con la lista de estudiantes y sus ausencias
+            // Mostrar el modal con la lista de estudiantes
             Swal.fire({
                 html: `
                     <div>${estudiantesHTML}</div>
                     <button id="copiarNombresBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;">Copiar Nombres</button>
-                    <button id="copiarTiposBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;">Copiar Tipos de Ausencias</button>
-                    <button id="copiarFechasBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;">Copiar Fechas de Ausencias</button>
+                    <button id="copiarAusenciasBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;">Copiar Ausencias (Formato Excel)</button>
                 `,
                 showCloseButton: true,
                 showCancelButton: true,
-                cancelButtonText: 'Cancelar'
+                cancelButtonText: 'Cancelar',
+                didOpen: () => {
+                    // Copiar nombres (simple lista)
+                    document.getElementById('copiarNombresBtn').addEventListener('click', () => {
+                        const textoACopiar = nombresParaCopiar.join('\n');
+                        navigator.clipboard.writeText(textoACopiar).then(() => {
+                            Swal.fire('Copiado', 'Los nombres se han copiado al portapapeles.', 'success');
+                        });
+                    });
+                    
+                    // Copiar ausencias en formato Excel (columnas separadas)
+                    document.getElementById('copiarAusenciasBtn').addEventListener('click', () => {
+                        // Crear un string con formato TSV (tab-separated values)
+                        let textoACopiar = '';
+                        
+                        // Primera fila: encabezados (días del mes)
+                        const encabezados = Array.from({length: diasMes}, (_, i) => i + 1);
+                        textoACopiar += encabezados.join('\t') + '\n';
+                        
+                        // Filas siguientes: datos de ausencias
+                        ausenciasParaCopiar.forEach(ausencias => {
+                            textoACopiar += ausencias.split(',').join('\t') + '\n';
+                        });
+                        
+                        // Usar el objeto Clipboard para copiar como texto plano con tabs
+                        navigator.clipboard.writeText(textoACopiar).then(() => {
+                            Swal.fire('Copiado', 'Las ausencias se han copiado en formato Excel.', 'success');
+                        });
+                    });
+                }
             });
         }
     });

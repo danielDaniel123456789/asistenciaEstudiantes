@@ -68,47 +68,61 @@ function calificarAsistenciaDelMes() {
             // Obtener los estudiantes en el grupo y materia seleccionados
             const selectedStudents = students.filter(s => s.groupId === groupId && s.materiaId === materiaId);
 
-            // Obtener el número de días del mes seleccionado (incluyendo años bisiestos para febrero)
-            const currentYear = new Date().getFullYear();
-            let daysInMonth = new Date(currentYear, parseInt(month) + 1, 0).getDate();
-
-            // Si es febrero (mes 1) y es un año bisiesto, ajustar los días
-            if (parseInt(month) === 1) { // Febrero es el mes 1 (Índice 1)
-                if ((currentYear % 4 === 0 && currentYear % 100 !== 0) || (currentYear % 400 === 0)) {
-                    daysInMonth = 29; // Año bisiesto, 29 días
-                } else {
-                    daysInMonth = 28; // Año no bisiesto, 28 días
-                }
+            if (selectedStudents.length === 0) {
+                Swal.showValidationMessage('No hay estudiantes en este grupo y materia');
+                return false;
             }
+
+            // Verificar si ya existe asistencia registrada para este mes
+            const monthNumber = parseInt(month) + 1; // Convertir a número de mes (1-12)
+            const currentYear = new Date().getFullYear();
+            
+            const hasExistingRecords = selectedStudents.some(student => {
+                return (student.absences || []).some(absence => {
+                    const absenceDate = new Date(absence.date);
+                    return absenceDate.getFullYear() === currentYear && 
+                           absenceDate.getMonth() + 1 === monthNumber &&
+                           absence.grupoId === groupId &&
+                           absence.materiaId === materiaId;
+                });
+            });
+
+            if (hasExistingRecords) {
+                Swal.showValidationMessage('Ya existe asistencia registrada para este mes, grupo y materia');
+                return false;
+            }
+
+            // Obtener el número de días del mes seleccionado
+            let daysInMonth = new Date(currentYear, monthNumber, 0).getDate();
 
             // Crear las fechas del mes
             const datesInMonth = [];
             for (let day = 1; day <= daysInMonth; day++) {
-                datesInMonth.push(`${currentYear}-${(parseInt(month) + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
+                datesInMonth.push(`${currentYear}-${monthNumber.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
             }
 
             // Asignar el valor "4" (presente) a todas las fechas de asistencia de los estudiantes seleccionados
             selectedStudents.forEach(student => {
-                // Inicializar la propiedad de ausencias si no existe
                 student.absences = student.absences || [];
-
+                
                 datesInMonth.forEach(date => {
-                    // Verificar si la fecha ya existe para evitar duplicados
-                    if (!student.absences.some(a => a.date === date)) {
-                        student.absences.push({
-                            id: student.absences.length + 1, // Nuevo ID autoincrementado
-                            type: "4", // Valor para "presente"
-                            materiaId: materiaId,
-                            grupoId: groupId,
-                            date: date
-                        });
-                    }
+                    student.absences.push({
+                        id: Date.now() + Math.floor(Math.random() * 1000), // ID único
+                        type: "4", // Valor para "presente"
+                        materiaId: materiaId,
+                        grupoId: groupId,
+                        date: date
+                    });
                 });
             });
 
             // Guardar los cambios en el localStorage
             localStorage.setItem('students', JSON.stringify(students));
 
+            return true;
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
             Swal.fire('Guardado', 'Asistencia del mes registrada correctamente para todos los estudiantes', 'success');
         }
     });

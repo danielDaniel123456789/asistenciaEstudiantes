@@ -22,16 +22,19 @@ function editAbsence(studentIndex, absenceIndex, absenceID) {
                     title: `Modificar tipo de ausencia`,
                     html: `
                         <strong>Fecha:</strong> ${absence.date} <br>
-                        <strong>Tipo actual:</strong> ${absence.type || 'No especificado'} <br>
+                        <strong>Tipo actual:</strong> ${getAbsenceTypeLabel(absence.type)} <br>
                         <label for="absenceType">Selecciona el nuevo tipo de ausencia:</label>
                         <select id="absenceType" class="form-select">
-                            <option value="justificada" ${absence.type === 'justificada' ? 'selected' : ''}>Ausencia Justificada</option>
-                            <option value="injustificada" ${absence.type === 'injustificada' ? 'selected' : ''}>Ausencia Injustificada</option>
-                            <option value="tardía" ${absence.type === 'tardía' ? 'selected' : ''}>Llegó tarde a clases</option>
+                            <option value="4" ${absence.type === '4' ? 'selected' : ''}>Presente</option>
+                            <option value="3" ${absence.type === '3' ? 'selected' : ''}>Ausencia Justificada</option>
+                            <option value="3" ${absence.type === '3' ? 'selected' : ''}>Tardía Justificada</option>
+                            <option value="2" ${absence.type === '2' ? 'selected' : ''}>Ausencia justificada</option>
+                            <option value="1" ${absence.type === '1' ? 'selected' : ''}>Tardía no justificada (2=1 Ausencia)</option>
+                            <option value="0" ${absence.type === '0' ? 'selected' : ''}>Ausencia no justificada</option>
                         </select>
                     `,
                     showCancelButton: true,
-                    confirmButtonText: 'OK',
+                    confirmButtonText: 'Guardar',
                     cancelButtonText: 'Cancelar',
                     preConfirm: () => {
                         // Obtener el valor seleccionado del select
@@ -41,14 +44,19 @@ function editAbsence(studentIndex, absenceIndex, absenceID) {
                         absence.type = newType;
 
                         // Guardar los cambios en localStorage
-                        students[students.indexOf(student)] = student; // Asegurarse de actualizar el estudiante en el array
                         localStorage.setItem('students', JSON.stringify(students));
 
-                        // Confirmar que el tipo se ha actualizado
+                        return newType;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
                         Swal.fire({
                             title: 'Tipo de ausencia actualizado',
-                            text: `El tipo de ausencia ha sido cambiado a: ${newType}`,
+                            text: `El tipo de ausencia ha sido cambiado a: ${getAbsenceTypeLabel(result.value)}`,
                             icon: 'success'
+                        }).then(() => {
+                            // Recargar la página o actualizar la vista según sea necesario
+                            location.reload();
                         });
                     }
                 });
@@ -76,4 +84,16 @@ function editAbsence(studentIndex, absenceIndex, absenceID) {
             icon: 'error'
         });
     }
+}
+
+// Función auxiliar para obtener la etiqueta del tipo de ausencia
+function getAbsenceTypeLabel(type) {
+    const types = {
+        '4': 'Presente',
+        '3': 'Ausencia Justificada',
+        '2': 'Ausencia justificada',
+        '1': 'Tardía no justificada (2=1 Ausencia)',
+        '0': 'Ausencia no justificada'
+    };
+    return types[type] || 'No especificado';
 }
