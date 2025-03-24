@@ -39,12 +39,12 @@ function loadStudents(students = null) {
 
                  <div class="p-2 btn-group" role="group" aria-label="Basic example">
                     <button type="button" class="btn btn-primary" onclick="registrarTarea(${student.id})">tareas</button>
-                    <button type="button" class="btn btn-primary" onclick="viewTasks(${student.id})">resumeTareas</button>
+                    <button type="button" class="btn btn-primary" onclick="viewTasks(${student.id})">Informe</button>
                 </div>
 
                 <div class="p-2 btn-group" role="group" aria-label="Basic example">
                     <button type="button" class="btn btn-primary" onclick="registrarPrueba(${student.id})">Prueba</button>
-                    <button type="button" class="btn btn-primary" onclick="viewPruebas(${student.id})">resumen Pruebas</button>
+                    <button type="button" class="btn btn-primary" onclick="viewPruebas(${student.id})">Informe</button>
                 </div>
             </div>
         </div>
