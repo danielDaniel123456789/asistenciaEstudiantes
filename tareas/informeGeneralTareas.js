@@ -73,7 +73,7 @@ function informeGeneralTareas() {
                     const estudiantes = JSON.parse(localStorage.getItem('students')) || [];
 
                     // Filtrar estudiantes por grupo y materia seleccionados
-                    const estudiantesFiltrados = estudiantes.filter(estudiante => 
+                    const estudiantesFiltrados = estudiantes.filter(estudiante =>
                         estudiante.groupId == grupoSeleccionado && estudiante.materiaId == materiaSeleccionada
                     );
 
@@ -101,7 +101,6 @@ function informeGeneralTareas() {
                     tareasUnicas.forEach(tarea => {
                         estudiantesHTML += `<th>Tarea ${tarea.id}</th>`;
                     });
-                    estudiantesHTML += '<th>Acciones</th>'; // Columna para los botones de acción
                     estudiantesHTML += '</tr></thead><tbody>';
 
                     // Recorrer los estudiantes y sus tareas
@@ -114,13 +113,6 @@ function informeGeneralTareas() {
                             estudiantesHTML += `<td>${tareaEstudiante ? tareaEstudiante.puntos || tareaEstudiante.score : 'Sin puntos'}</td>`;
                         });
 
-                        // Botones de Editar y Eliminar
-                        estudiantesHTML += `
-                            <td>
-                                <button class="btn btn-warning btn-sm" onclick="editarTarea(${estudiante.id})">Editar</button>
-                                <button class="btn btn-danger btn-sm" onclick="eliminarTarea(${estudiante.id})">Eliminar</button>
-                            </td>
-                        `;
                         estudiantesHTML += '</tr>';
                     });
 
@@ -129,17 +121,64 @@ function informeGeneralTareas() {
                     // Mostrar el informe en un modal
                     Swal.fire({
                         title: 'Informe General de Tareas',
-                        html: estudiantesHTML,
+                        html: `
+                            <div id="footerCopiado" class="p-4 bg-warning text-center" style="display:none">
+                                <h3>Copiado, pégalo en tu grupo de WhatsApp</h3>
+                                <i class="fa fa-cog fa-spin fa-3x fa-fw"></i>
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            <div>${estudiantesHTML}</div>
+                            <button id="copiarNombresBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;">Copiar Nombres</button>
+                            <button id="copiarPuntuacionesBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;">Copiar Puntuaciones</button>
+                        `,
                         showCloseButton: true,
                         showCancelButton: true,
                         cancelButtonText: 'Cerrar'
+                    });
+
+                    // Copiar los nombres
+                    document.getElementById('copiarNombresBtn').addEventListener('click', () => {
+                        const filas = document.querySelectorAll('table tbody tr');
+                        let textoCopiar = '';
+
+                        filas.forEach(fila => {
+                            const nombre = fila.querySelector('td:first-child').innerText;
+                            textoCopiar += nombre + '\n';
+                        });
+
+                        navigator.clipboard.writeText(textoCopiar).then(() => {
+                            const footer = document.getElementById('footerCopiado');
+                            if (footer) {
+                                footer.style.display = 'block';
+                                setTimeout(() => {
+                                    footer.style.display = 'none';
+                                }, 4000);
+                            }
+                        }).catch(() => {
+                            Swal.fire('Error', 'No se pudieron copiar los nombres', 'error');
+                        });
+                    });
+
+                    // Copiar las puntuaciones
+                    document.getElementById('copiarPuntuacionesBtn').addEventListener('click', () => {
+                        const puntuacionesTexto = estudiantesFiltrados.map(estudiante => {
+                            const puntuaciones = estudiante.tareas.map(tarea => tarea.puntos || tarea.score || 'Sin puntos').join('\t');
+                            return puntuaciones;
+                        }).join('\n');
+
+                        navigator.clipboard.writeText(puntuacionesTexto).then(() => {
+                            const footerCopiado = document.getElementById('footerCopiado');
+                            footerCopiado.style.display = 'block';
+
+                            setTimeout(() => {
+                                footerCopiado.style.display = 'none';
+                            }, 4000);
+                        }).catch(() => {
+                            Swal.fire('Error', 'No se pudieron copiar las puntuaciones', 'error');
+                        });
                     });
                 }
             });
         }
     });
 }
-
-
-
-

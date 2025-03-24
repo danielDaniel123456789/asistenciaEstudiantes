@@ -89,22 +89,16 @@ function informeGeneralPruebas() {
                         estudiantesHTML += `<th>Prueba ${prueba.id} (${prueba.date})</th>`;
                     });
 
-                    estudiantesHTML += '<th>Acciones</th>';
                     estudiantesHTML += '</tr></thead><tbody>';
 
                     estudiantesFiltrados.forEach(estudiante => {
-                        estudiantesHTML += `<tr><td>${estudiante.name}</td>`;
+                        estudiantesHTML += `<tr><td>${estudiante.name} </td>`;
 
                         pruebasUnicas.forEach(prueba => {
                             const pruebaEstudiante = estudiante.pruebas.find(p => p.id === prueba.id);
-                            estudiantesHTML += `<td>${pruebaEstudiante ? pruebaEstudiante.puntos : 'Sin puntos'}</td>`;
+                            estudiantesHTML += `<td>${pruebaEstudiante ? pruebaEstudiante.puntos : 'Sin puntos'} </td>`;
                         });
 
-                        estudiantesHTML += `
-                            <td>
-                                <button class="btn btn-warning btn-sm" onclick="editarPrueba(${estudiante.id})">Editar</button>
-                           </td>
-                        `;
                         estudiantesHTML += '</tr>';
                     });
 
@@ -116,10 +110,44 @@ function informeGeneralPruebas() {
 
                     Swal.fire({
                         title: `Informe de Pruebas - ${nombreGrupo} - ${nombreMateria}`,
-                        html: estudiantesHTML,
+                        html: estudiantesHTML + `
+                            <button id="copiarNombresBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;">Copiar Nombres</button>
+                            <button id="copiarPruebasBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;">Copiar Pruebas</button>
+                        `,
                         showCloseButton: true,
                         showCancelButton: true,
                         cancelButtonText: 'Cerrar'
+                    });
+
+                    // Copiar los nombres
+                    document.getElementById('copiarNombresBtn').addEventListener('click', () => {
+                        const filas = document.querySelectorAll('table tbody tr');
+                        let textoCopiar = '';
+
+                        filas.forEach(fila => {
+                            const nombre = fila.querySelector('td:first-child').innerText;
+                            textoCopiar += nombre + '\n';
+                        });
+
+                        navigator.clipboard.writeText(textoCopiar).then(() => {
+                            Swal.fire('Copiado', 'Los nombres han sido copiados al portapapeles.', 'success');
+                        }).catch(() => {
+                            Swal.fire('Error', 'No se pudieron copiar los nombres', 'error');
+                        });
+                    });
+
+                    // Copiar las pruebas
+                    document.getElementById('copiarPruebasBtn').addEventListener('click', () => {
+                        const pruebasTexto = estudiantesFiltrados.map(estudiante => {
+                            const pruebas = estudiante.pruebas.map(prueba => prueba.puntos || 'Sin puntos').join('\t');
+                            return pruebas;
+                        }).join('\n');
+
+                        navigator.clipboard.writeText(pruebasTexto).then(() => {
+                            Swal.fire('Copiado', 'Las pruebas han sido copiada al portapapeles.', 'success');
+                        }).catch(() => {
+                            Swal.fire('Error', 'No se pudieron copiar las pruebas', 'error');
+                        });
                     });
                 }
             });
