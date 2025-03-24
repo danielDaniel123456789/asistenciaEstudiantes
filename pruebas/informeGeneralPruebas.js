@@ -75,29 +75,43 @@ function informeGeneralPruebas() {
 
                     let pruebasUnicas = [];
                     estudiantesFiltrados.forEach(estudiante => {
-                        estudiante.pruebas.forEach(prueba => {
-                            if (!pruebasUnicas.some(p => p.id === prueba.id)) {
-                                pruebasUnicas.push(prueba);
-                            }
-                        });
+                        // Add check for pruebas existence
+                        if (estudiante.pruebas && Array.isArray(estudiante.pruebas)) {
+                            estudiante.pruebas.forEach(prueba => {
+                                if (!pruebasUnicas.some(p => p.id === prueba.id)) {
+                                    pruebasUnicas.push(prueba);
+                                }
+                            });
+                        }
                     });
 
                     let estudiantesHTML = '<table class="table p-2">';
                     estudiantesHTML += '<thead><tr><th>Nombre de estudiantes</th>';
 
-                    pruebasUnicas.forEach(prueba => {
-                        estudiantesHTML += `<th>Prueba ${prueba.id} (${prueba.date})</th>`;
-                    });
+                    if (pruebasUnicas && pruebasUnicas.length > 0) {
+                        pruebasUnicas.forEach(prueba => {
+                            estudiantesHTML += `<th>Prueba ${prueba.id} (${prueba.date})</th>`;
+                        });
+                    } else {
+                        estudiantesHTML += '<th>No hay pruebas disponibles</th>';
+                    }
 
                     estudiantesHTML += '</tr></thead><tbody>';
 
                     estudiantesFiltrados.forEach(estudiante => {
                         estudiantesHTML += `<tr><td>${estudiante.name} </td>`;
 
-                        pruebasUnicas.forEach(prueba => {
-                            const pruebaEstudiante = estudiante.pruebas.find(p => p.id === prueba.id);
-                            estudiantesHTML += `<td>${pruebaEstudiante ? pruebaEstudiante.puntos : 'Sin puntos'} </td>`;
-                        });
+                        if (pruebasUnicas && pruebasUnicas.length > 0) {
+                            pruebasUnicas.forEach(prueba => {
+                                // Check if student has pruebas and find the matching one
+                                const pruebaEstudiante = (estudiante.pruebas && Array.isArray(estudiante.pruebas)) 
+                                    ? estudiante.pruebas.find(p => p.id === prueba.id)
+                                    : null;
+                                estudiantesHTML += `<td>${pruebaEstudiante ? pruebaEstudiante.puntos : 'Sin puntos'} </td>`;
+                            });
+                        } else {
+                            estudiantesHTML += '<td>Sin pruebas</td>';
+                        }
 
                         estudiantesHTML += '</tr>';
                     });
@@ -110,7 +124,7 @@ function informeGeneralPruebas() {
 
                     Swal.fire({
                         title: `Informe de Pruebas - ${nombreGrupo} - ${nombreMateria}`,
-                        html: estudiantesHTML + `
+                        html: estudiantesHTML + ` 
                             <button id="copiarNombresBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;">Copiar Nombres</button>
                             <button id="copiarPruebasBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;">Copiar Pruebas</button>
                         `,
@@ -139,12 +153,15 @@ function informeGeneralPruebas() {
                     // Copiar las pruebas
                     document.getElementById('copiarPruebasBtn').addEventListener('click', () => {
                         const pruebasTexto = estudiantesFiltrados.map(estudiante => {
-                            const pruebas = estudiante.pruebas.map(prueba => prueba.puntos || 'Sin puntos').join('\t');
+                            // Check if pruebas exists and is an array
+                            const pruebas = (estudiante.pruebas && Array.isArray(estudiante.pruebas))
+                                ? estudiante.pruebas.map(prueba => prueba.puntos || 'Sin puntos').join('\t')
+                                : '0';
                             return pruebas;
                         }).join('\n');
 
                         navigator.clipboard.writeText(pruebasTexto).then(() => {
-                            Swal.fire('Copiado', 'Las pruebas han sido copiada al portapapeles.', 'success');
+                            Swal.fire('Copiado', 'Las pruebas han sido copiadas al portapapeles.', 'success');
                         }).catch(() => {
                             Swal.fire('Error', 'No se pudieron copiar las pruebas', 'error');
                         });

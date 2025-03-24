@@ -83,24 +83,31 @@ function informeGeneralTareas() {
                         return;
                     }
 
+                    // Obtener todas las tareas únicas para ese grupo y materia
+                    let tareasUnicas = [];
+                    estudiantesFiltrados.forEach(estudiante => {
+                        // Check if tareas exists and is an array
+                        if (estudiante.tareas && Array.isArray(estudiante.tareas)) {
+                            estudiante.tareas.forEach(tarea => {
+                                if (!tareasUnicas.some(t => t.id === tarea.id)) {
+                                    tareasUnicas.push(tarea);
+                                }
+                            });
+                        }
+                    });
+
                     // Crear la tabla HTML para las tareas
                     let estudiantesHTML = '<table class="table p-2">';
                     estudiantesHTML += '<thead><tr><th>Nombre de estudiantes</th>';
 
-                    // Obtener todas las tareas únicas para ese grupo y materia
-                    let tareasUnicas = [];
-                    estudiantesFiltrados.forEach(estudiante => {
-                        estudiante.tareas.forEach(tarea => {
-                            if (!tareasUnicas.some(t => t.id === tarea.id)) {
-                                tareasUnicas.push(tarea);
-                            }
-                        });
-                    });
-
                     // Crear las cabeceras de las tareas
-                    tareasUnicas.forEach(tarea => {
-                        estudiantesHTML += `<th>Tarea ${tarea.id}</th>`;
-                    });
+                    if (tareasUnicas.length > 0) {
+                        tareasUnicas.forEach(tarea => {
+                            estudiantesHTML += `<th>Tarea ${tarea.id}</th>`;
+                        });
+                    } else {
+                        estudiantesHTML += '<th>No hay tareas disponibles</th>';
+                    }
                     estudiantesHTML += '</tr></thead><tbody>';
 
                     // Recorrer los estudiantes y sus tareas
@@ -108,10 +115,20 @@ function informeGeneralTareas() {
                         estudiantesHTML += `<tr><td>${estudiante.name}</td>`;
 
                         // Crear las columnas de tareas para cada estudiante
-                        tareasUnicas.forEach(tarea => {
-                            const tareaEstudiante = estudiante.tareas.find(t => t.id === tarea.id);
-                            estudiantesHTML += `<td>${tareaEstudiante ? tareaEstudiante.puntos || tareaEstudiante.score : 'Sin puntos'}</td>`;
-                        });
+                        if (tareasUnicas.length > 0) {
+                            tareasUnicas.forEach(tarea => {
+                                // Check if student has tareas and find the matching one
+                                const tareaEstudiante = (estudiante.tareas && Array.isArray(estudiante.tareas))
+                                    ? estudiante.tareas.find(t => t.id === tarea.id)
+                                    : null;
+                                const puntos = tareaEstudiante 
+                                    ? (tareaEstudiante.puntos || tareaEstudiante.score || 'Sin puntos')
+                                    : '0';
+                                estudiantesHTML += `<td>${puntos}</td>`;
+                            });
+                        } else {
+                            estudiantesHTML += '<td>Sin tareas</td>';
+                        }
 
                         estudiantesHTML += '</tr>';
                     });
@@ -162,17 +179,21 @@ function informeGeneralTareas() {
                     // Copiar las puntuaciones
                     document.getElementById('copiarPuntuacionesBtn').addEventListener('click', () => {
                         const puntuacionesTexto = estudiantesFiltrados.map(estudiante => {
-                            const puntuaciones = estudiante.tareas.map(tarea => tarea.puntos || tarea.score || 'Sin puntos').join('\t');
-                            return puntuaciones;
+                            // Check if tareas exists and is an array
+                            if (estudiante.tareas && Array.isArray(estudiante.tareas)) {
+                                return estudiante.tareas.map(tarea => tarea.puntos || tarea.score || 'Sin puntos').join('\t');
+                            }
+                            return 'Sin tareas';
                         }).join('\n');
 
                         navigator.clipboard.writeText(puntuacionesTexto).then(() => {
                             const footerCopiado = document.getElementById('footerCopiado');
-                            footerCopiado.style.display = 'block';
-
-                            setTimeout(() => {
-                                footerCopiado.style.display = 'none';
-                            }, 4000);
+                            if (footerCopiado) {
+                                footerCopiado.style.display = 'block';
+                                setTimeout(() => {
+                                    footerCopiado.style.display = 'none';
+                                }, 4000);
+                            }
                         }).catch(() => {
                             Swal.fire('Error', 'No se pudieron copiar las puntuaciones', 'error');
                         });
