@@ -1,4 +1,4 @@
-function calificarAsistenciaDelAyo() {
+function xxxxxxcalificarAsistenciaDelAyo() {
     // Cargar los grupos, materias y estudiantes desde el localStorage de forma segura
     let grupos = localStorage.getItem('grupos') ? JSON.parse(localStorage.getItem('grupos')) : [];
     let materias = localStorage.getItem('materias') ? JSON.parse(localStorage.getItem('materias')) : [];
@@ -12,6 +12,11 @@ function calificarAsistenciaDelAyo() {
 
     if (materias.length === 0) {
         Swal.fire('Información', 'No hay materias disponibles. Por favor, agregue una materia primero.', 'info');
+        return;
+    }
+
+    if (students.length === 0) {
+        Swal.fire('Información', 'No hay estudiantes disponibles. Por favor, agregue estudiantes primero.', 'info');
         return;
     }
 
@@ -96,71 +101,6 @@ function calificarAsistenciaDelAyo() {
     }).then((result) => {
         if (result.isConfirmed) {
             Swal.fire('Guardado', 'Asistencia del año registrada correctamente para todos los estudiantes', 'success');
-        }
-    });
-}
-
-// Función para agregar un nuevo estudiante y recalificar la asistencia
-function agregarNuevoEstudiante() {
-    // Cargar los grupos, materias y estudiantes desde el localStorage
-    let grupos = localStorage.getItem('grupos') ? JSON.parse(localStorage.getItem('grupos')) : [];
-    let materias = localStorage.getItem('materias') ? JSON.parse(localStorage.getItem('materias')) : [];
-    let students = localStorage.getItem('students') ? JSON.parse(localStorage.getItem('students')) : [];
-
-    // Verificar si hay grupos y materias
-    if (grupos.length === 0 || materias.length === 0) {
-        Swal.fire('Error', 'Debe haber al menos un grupo y una materia para agregar estudiantes.', 'error');
-        return;
-    }
-
-    // Mostrar un formulario para agregar un nuevo estudiante
-    Swal.fire({
-        title: 'Agregar Nuevo Estudiante',
-        html: `
-            <input id="newStudentName" class="form-control" placeholder="Nombre del estudiante" required>
-            <select id="newStudentGrupo" class="form-select" required>
-                <option value="" disabled selected>Selecciona un grupo</option>
-                ${grupos.map(grupo => `<option value="${grupo.id}">${grupo.nombre}</option>`).join('')}
-            </select>
-            <select id="newStudentMateria" class="form-select" required>
-                <option value="" disabled selected>Selecciona una materia</option>
-                ${materias.map(materia => `<option value="${materia.id}">${materia.nombre}</option>`).join('')}
-            </select>
-        `,
-        focusConfirm: false,
-        showCancelButton: true,
-        cancelButtonText: 'Cancelar',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Agregar Estudiante',
-        preConfirm: () => {
-            const name = document.getElementById('newStudentName').value;
-            const groupId = document.getElementById('newStudentGrupo').value;
-            const materiaId = document.getElementById('newStudentMateria').value;
-
-            if (!name || !groupId || !materiaId) {
-                Swal.showValidationMessage('Debe llenar todos los campos');
-                return false;
-            }
-
-            // Crear el nuevo estudiante
-            const newStudent = {
-                id: Date.now(), // ID único basado en el tiempo
-                name: name,
-                groupId: groupId,
-                materiaId: materiaId,
-                absences: [] // Inicialmente sin asistencia
-            };
-
-            // Agregar al nuevo estudiante a la lista
-            students.push(newStudent);
-
-            // Guardar los cambios en el localStorage
-            localStorage.setItem('students', JSON.stringify(students));
-
-            // Llamar a la función para recalificar la asistencia del nuevo estudiante
-            calificarAsistenciaDelAyo();
-
-            return true;
         }
     });
 }
