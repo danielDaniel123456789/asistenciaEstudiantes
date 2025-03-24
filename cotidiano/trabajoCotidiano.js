@@ -94,9 +94,11 @@ function trabajoCotidiano(studentId) {
             localStorage.setItem('students', JSON.stringify(students));
             localStorage.setItem('lastTrabajoId', newId); // Actualizar el último ID utilizado
 
+            
+
             Swal.fire('Guardado', 'Trabajo cotidiano registrado correctamente.', 'success')
                 .then(() => {
-                    informeTrabajoCotidiano(studentId);
+                    resumeCotidiano(studentId);
                 });
         }
     });

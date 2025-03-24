@@ -35,7 +35,7 @@ function resumeCotidiano(index) {
 
     console.log("Materia:", nomBreMateria);
 
-    // Crear la tabla de tareas (Trabajo Cotidiano)
+    // Crear la tabla de trabajo cotidiano
     let tareasDetails = `
     <h6>0 = No hubo participación </h6>
     <h6>1 = Baja participación de la clase </h6>
@@ -54,16 +54,16 @@ function resumeCotidiano(index) {
         <tbody>
     `;
 
-    // Verificar que `tareas` existe y es un array
-    if (Array.isArray(student.tareas)) {
-        student.tareas.forEach((tarea, tareaIndex) => {
+    // Verificar que `trabajoCotidiano` existe y es un array
+    if (Array.isArray(student.trabajoCotidiano)) {
+        student.trabajoCotidiano.forEach((tarea, tareaIndex) => {
             tareasDetails += `
             <tr>
                 <td>${tarea.date}</td>
-                <td>${tarea.puntos}</td>
+                <td>${tarea.type}</td> <!-- Se muestra el tipo de participación -->
                 <td>
                     <button class="btn btn-danger btn-sm"
-                        onclick="eliminarTarea(${tareaIndex}, ${student.id})">X</button>
+                        onclick="eliminarTrabajoCotidiano(${tareaIndex}, ${student.id})">X</button>
                 </td>
             </tr>
             `;
