@@ -33,7 +33,7 @@ function calificarAsistenciaDelMes() {
     // Abrir SweetAlert para calificar asistencia del mes
     Swal.fire({
         title: 'Calificar Asistencia del Mes',
-        html: `
+        html: ` 
             <select id="asistenciaGrupo" class="form-select">
                 <option value="" disabled selected>Selecciona un grupo</option>
                 ${grupoOptions}
@@ -68,9 +68,18 @@ function calificarAsistenciaDelMes() {
             // Obtener los estudiantes en el grupo y materia seleccionados
             const selectedStudents = students.filter(s => s.groupId === groupId && s.materiaId === materiaId);
 
-            // Obtener el número de días del mes seleccionado
+            // Obtener el número de días del mes seleccionado (incluyendo años bisiestos para febrero)
             const currentYear = new Date().getFullYear();
-            const daysInMonth = new Date(currentYear, parseInt(month) + 1, 0).getDate();
+            let daysInMonth = new Date(currentYear, parseInt(month) + 1, 0).getDate();
+
+            // Si es febrero (mes 1) y es un año bisiesto, ajustar los días
+            if (parseInt(month) === 1) { // Febrero es el mes 1 (Índice 1)
+                if ((currentYear % 4 === 0 && currentYear % 100 !== 0) || (currentYear % 400 === 0)) {
+                    daysInMonth = 29; // Año bisiesto, 29 días
+                } else {
+                    daysInMonth = 28; // Año no bisiesto, 28 días
+                }
+            }
 
             // Crear las fechas del mes
             const datesInMonth = [];
@@ -104,5 +113,3 @@ function calificarAsistenciaDelMes() {
         }
     });
 }
-
-       
