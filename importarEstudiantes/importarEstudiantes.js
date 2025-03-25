@@ -1,14 +1,25 @@
 function importarEstudiantes() {
-    // Obtener los grupos y materias desde localStorage
+    // Obtener datos desde localStorage
     const grupos = JSON.parse(localStorage.getItem("grupos")) || [];
     const materias = JSON.parse(localStorage.getItem("materias")) || [];
+    const existingStudents = JSON.parse(localStorage.getItem("students")) || [];
 
-    // Generar las opciones del select de grupos
+    // Encontrar el máximo ID de estudiantes existente
+    const maxStudentId = existingStudents.reduce((max, student) => 
+        Math.max(max, student.id), 0);
+
+    // Encontrar el máximo ID de ausencias existente (en todos los estudiantes)
+    const maxAbsenceId = existingStudents.reduce((maxAbsence, student) => {
+        const studentMax = student.absences.reduce((max, absence) => 
+            Math.max(max, absence.id), 0);
+        return Math.max(maxAbsence, studentMax);
+    }, 0);
+
+    // Generar opciones para los selects
     const selectGrupoOptions = grupos.map(grupo => 
         `<option value="${grupo.id}">${grupo.nombre}</option>`
     ).join("");
 
-    // Generar las opciones del select de materias
     const selectMateriaOptions = materias.map(materia => 
         `<option value="${materia.id}">${materia.nombre}</option>`
     ).join("");
@@ -53,60 +64,64 @@ function importarEstudiantes() {
             const cedulasText = document.getElementById("cedulaTextarea").value.trim();
 
             let names = namesText.split("\n")
-                .map(name => capitalizeWords(name.trim())) // Convierte cada palabra a "Capitalizada"
+                .map(name => capitalizeWords(name.trim()))
                 .filter(name => name !== "");
 
-            const cedulas = cedulasText.split("\n").map(cedula => cedula.trim()).filter(cedula => cedula !== "");
+            const cedulas = cedulasText.split("\n")
+                .map(cedula => cedula.trim())
+                .filter(cedula => cedula !== "");
 
-            if (!selectedGroup) {
-                Swal.fire("Error", "Debes seleccionar un grupo.", "error");
-                return;
-            }
+            // Validaciones
+            if (!selectedGroup) return Swal.fire("Error", "Debes seleccionar un grupo.", "error");
+            if (!selectedMateria) return Swal.fire("Error", "Debes seleccionar una materia.", "error");
+            if (names.length === 0) return Swal.fire("Error", "No se ingresaron nombres.", "error");
+            if (cedulas.length === 0) return Swal.fire("Error", "No se ingresaron cédulas.", "error");
+            if (names.length !== cedulas.length) return Swal.fire("Error", "El número de nombres y cédulas no coincide.", "error");
 
-            if (!selectedMateria) {
-                Swal.fire("Error", "Debes seleccionar una materia.", "error");
-                return;
-            }
-
-            if (names.length === 0) {
-                Swal.fire("Error", "No se ingresaron nombres.", "error");
-                return;
-            }
-
-            if (cedulas.length === 0) {
-                Swal.fire("Error", "No se ingresaron cédulas.", "error");
-                return;
-            }
-
-            if (names.length !== cedulas.length) {
-                Swal.fire("Error", "El número de nombres y cédulas no coincide.", "error");
-                return;
-            }
-
-            // Obtener los estudiantes almacenados para generar el siguiente ID
-            const existingStudents = JSON.parse(localStorage.getItem("students")) || [];
-            const lastStudent = existingStudents.length > 0 ? existingStudents[existingStudents.length - 1] : null;
-            const nextId = lastStudent ? lastStudent.id + 1 : 1; // Asigna el siguiente ID autoincremental
-
-            // Convertimos cada nombre y cédula en un objeto con la estructura esperada
+            // Crear nuevos estudiantes
             const newStudents = names.map((name, index) => ({
-                id: nextId + index, // Asignar el ID incrementado
+                id: maxStudentId + 1 + index,
                 name,
                 cedula: cedulas[index],
-                absences: [], // Asegura que las ausencias estén vacías inicialmente
-                materiaId: selectedMateria, // Asociamos la materia seleccionada
-                trabajoCotidiano: [], // Asegura que el trabajo cotidiano esté vacío inicialmente
-                groupId: selectedGroup // Asociamos el estudiante con el grupo seleccionado
+                absences: [], // Array vacío, cada ausencia tendrá su propio ID autoincremental
+                materiaId: selectedMateria,
+                trabajoCotidiano: [],
+                groupId: selectedGroup
             }));
 
-            // Fusionar los estudiantes existentes con los nuevos
+            // Actualizar y guardar
             const updatedStudents = [...existingStudents, ...newStudents];
-
-            // Guardar los estudiantes en el localStorage
             localStorage.setItem("students", JSON.stringify(updatedStudents));
+            
             Swal.fire("Éxito", "Estudiantes importados correctamente.", "success");
-            loadStudents(); // Recargar la lista
-            datosGeneralesEspecificos(selectGrupoOptions, selectMateriaOptions);
+            loadStudents();
+            datosGeneralesEspecificos(selectedGroup, selectedMateria);
         }
     });
+}
+
+// Función para agregar una ausencia con ID autoincremental
+function agregarAusencia(studentId, fecha, motivo) {
+    const students = JSON.parse(localStorage.getItem("students")) || [];
+    
+    // Encontrar el máximo ID de ausencia existente
+    const maxAbsenceId = students.reduce((maxAbsence, student) => {
+        const studentMax = student.absences.reduce((max, absence) => 
+            Math.max(max, absence.id), 0);
+        return Math.max(maxAbsence, studentMax);
+    }, 0);
+
+    const student = students.find(s => s.id === studentId);
+    if (student) {
+        const newAbsence = {
+            id: maxAbsenceId + 1,
+            fecha,
+            motivo
+        };
+        
+        student.absences.push(newAbsence);
+        localStorage.setItem("students", JSON.stringify(students));
+        return true;
+    }
+    return false;
 }
