@@ -1,3 +1,5 @@
+
+
 function datosGenerales() {
     Swal.fire({
         title: 'Datos Generales',

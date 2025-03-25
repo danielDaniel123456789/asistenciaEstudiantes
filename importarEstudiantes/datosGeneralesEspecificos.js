@@ -1,28 +1,53 @@
-function datosGeneralesEspecificos(materiaId, groupId) {
+function datosGeneralesEspecificos(groupId, materiaId) {
+
+    console.log('sss');
     let students = JSON.parse(localStorage.getItem('students') || '[]');
-    
-    if (!materiaId || !groupId) {
-        Swal.fire('Error', 'Materia o grupo no definidos.', 'error');
-        return;
-    }
-    
-    const selectedStudents = students.filter(s => s.groupId === groupId && s.materiaId === materiaId);
-    
-    if (selectedStudents.length === 0) {
-        Swal.fire('Información', 'No hay estudiantes en este grupo y materia.', 'info');
-        return;
-    }
-    
-    Swal.fire({
-        title: 'Confirmar Registro de Datos',
-        text: `Se registrarán datos para la materia seleccionada en el grupo seleccionado.`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Registrar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            ejecutarAmbasCalificaciones(groupId, materiaId, selectedStudents);
+    // const groupId = document.getElementById('grupo').value;
+    // const materiaId = document.getElementById('materia').value;
+
+     
+    ejecutarAmbasCalificaciones02(groupId,materiaId, students);
+}
+
+
+function ejecutarAmbasCalificaciones02(groupId, materiaId, students) {
+    ejecutarCalificacion02('4', 'Asistencia del Año', groupId, materiaId, students).then(() => {
+        return ejecutarCalificacion02('3', 'Trabajo Cotidiano del Año', groupId, materiaId, students);
+    }).catch(error => {
+        console.error("Error en la ejecución de informes:", error);
+    });
+}
+
+function ejecutarCalificacion02(tipo, titulo, groupId, materiaId, students) {
+    return new Promise((resolve, reject) => {
+        const currentYear = new Date().getFullYear();
+        const datesInYear = [];
+
+        for (let m = 0; m < 12; m++) {
+            let daysInMonth = new Date(currentYear, m + 1, 0).getDate();
+            for (let day = 1; day <= daysInMonth; day++) {
+                datesInYear.push(`${currentYear}-${(m + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
+            }
         }
+
+        students.forEach(student => {
+            let key = tipo === '4' ? 'absences' : 'trabajoCotidiano';
+            student[key] = student[key] || [];
+            datesInYear.forEach(date => {
+                student[key].push({
+                    id: Date.now() + Math.floor(Math.random() * 1000),
+                    type: tipo,
+                    materiaId: materiaId,
+                    grupoId: groupId,
+                    date: date
+                });
+            });
+        });
+
+        localStorage.setItem('students', JSON.stringify(students));
+
+        Swal.fire('Guardado', `${titulo} registrada correctamente para todos los estudiantes`, 'success').then(() => {
+            resolve();
+        });
     });
 }

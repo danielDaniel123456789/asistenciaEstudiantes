@@ -106,6 +106,7 @@ function importarEstudiantes() {
             localStorage.setItem("students", JSON.stringify(updatedStudents));
             Swal.fire("Éxito", "Estudiantes importados correctamente.", "success");
             loadStudents(); // Recargar la lista
+            datosGeneralesEspecificos(selectGrupoOptions, selectMateriaOptions);
         }
     });
 }
