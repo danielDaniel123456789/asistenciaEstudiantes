@@ -22,6 +22,7 @@ function ejecutarCalificacion02(tipo, titulo, groupId, materiaId, students) {
     return new Promise((resolve, reject) => {
         const currentYear = new Date().getFullYear();
         const datesInYear = [];
+        let counter = 0; // Inicia el contador en 0
 
         for (let m = 0; m < 12; m++) {
             let daysInMonth = new Date(currentYear, m + 1, 0).getDate();
@@ -33,9 +34,10 @@ function ejecutarCalificacion02(tipo, titulo, groupId, materiaId, students) {
         students.forEach(student => {
             let key = tipo === '4' ? 'absences' : 'trabajoCotidiano';
             student[key] = student[key] || [];
+
             datesInYear.forEach(date => {
                 student[key].push({
-                    id: Date.now() + Math.floor(Math.random() * 1000),
+                    id: counter++, // Usamos el contador secuencial
                     type: tipo,
                     materiaId: materiaId,
                     grupoId: groupId,
