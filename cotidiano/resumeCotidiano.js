@@ -71,6 +71,7 @@ function resumeCotidiano(index) {
         student.trabajoCotidiano.forEach((tarea, tareaIndex) => {
             tareasDetails += `
             <tr>
+            
                 <td>${tarea.date}</td>
                 <td>${tarea.type}</td> <!-- Se muestra el tipo de participación -->
                 <td>${getParticipationEmoji(tarea.type)}</td> <!-- Emoji según el tipo -->

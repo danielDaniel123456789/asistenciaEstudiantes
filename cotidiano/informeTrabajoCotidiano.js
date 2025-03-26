@@ -3,18 +3,6 @@ function informeTrabajoCotidiano() {
     const materias = JSON.parse(localStorage.getItem('materias')) || [];
     const estudiantes = JSON.parse(localStorage.getItem('students')) || [];
 
-    // Obtener todos los trabajos cotidianos de todos los estudiantes
-    let trabajoCotidiano = [];
-    estudiantes.forEach(estudiante => {
-        if (estudiante.trabajoCotidiano && estudiante.trabajoCotidiano.length > 0) {
-            trabajoCotidiano = trabajoCotidiano.concat(estudiante.trabajoCotidiano.map(t => ({
-                ...t,
-                grupoId: t.grupoId.toString(), // Asegurar que grupoId sea string
-                materiaId: t.materiaId.toString() // Asegurar que materiaId sea string
-            })));
-        }
-    });
-
     if (grupos.length === 0) {
         Swal.fire('Error', 'No se encontraron grupos en el almacenamiento local.', 'error');
         return;
@@ -102,55 +90,130 @@ function informeTrabajoCotidiano() {
                         if (result.isConfirmed) {
                             const { mesIndex, diasDelMes, nombreMes } = result.value;
 
-                            // Filtrar los trabajos según selección
-                            const trabajosFiltrados = trabajoCotidiano.filter(trabajo => {
-                                try {
-                                    const fechaTrabajo = new Date(trabajo.date);
-                                    return trabajo.grupoId.toString() === grupoSeleccionado.id.toString() &&
-                                           trabajo.materiaId.toString() === materiaSeleccionada.id.toString() &&
-                                           fechaTrabajo.getMonth() === mesIndex;
-                                } catch (e) {
-                                    console.error("Error al procesar fecha:", trabajo.date, e);
-                                    return false;
-                                }
-                            });
+                            // Filtrar estudiantes del grupo seleccionado
+                            const estudiantesDelGrupo = estudiantes.filter(est => 
+                                est.groupId && est.groupId.toString() === grupoSeleccionado.id.toString()
+                            );
 
-                            // Ordenar por fecha
-                            trabajosFiltrados.sort((a, b) => new Date(a.date) - new Date(b.date));
+                            // Preparar datos para copiar
+                            let datosColumna1 = [];
+                            let datosColumna2 = [];
 
                             // Crear tabla
                             let tableHTML = `
                                 <table border="1" style="width:100%; border-collapse: collapse; margin-top: 10px;">
                                     <thead>
                                         <tr style="background-color: #f2f2f2;">
-                                            <th style="padding: 8px; border: 1px solid #ddd;">ID</th>
-                                            <th style="padding: 8px; border: 1px solid #ddd;">Tipo</th>
-                                            <th style="padding: 8px; border: 1px solid #ddd;">Fecha</th>
+                                            <th style="padding: 8px; border: 1px solid #ddd;">Estudiante</th>
+                                            <th style="padding: 8px; border: 1px solid #ddd;">Trabajos Cotidianos</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                             `;
 
-                            if (trabajosFiltrados.length > 0) {
-                                trabajosFiltrados.forEach(trabajo => {
+                            if (estudiantesDelGrupo.length > 0) {
+                                estudiantesDelGrupo.forEach(estudiante => {
+                                    // Filtrar trabajos del estudiante para la materia y mes seleccionados
+                                    const trabajosEstudiante = estudiante.trabajoCotidiano 
+                                        ? estudiante.trabajoCotidiano.filter(trabajo => {
+                                            try {
+                                                const fechaTrabajo = new Date(trabajo.date);
+                                                return trabajo.materiaId.toString() === materiaSeleccionada.id.toString() &&
+                                                       fechaTrabajo.getMonth() === mesIndex;
+                                            } catch (e) {
+                                                console.error("Error al procesar fecha:", trabajo.date, e);
+                                                return false;
+                                            }
+                                        })
+                                        : [];
+
+                                    // Ordenar trabajos por fecha
+                                    trabajosEstudiante.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                                    // Agregar a datos para copiar
+                                    datosColumna1.push(estudiante.name);
+                                    
+                                    let trabajosTexto = '';
+                                    if (trabajosEstudiante.length > 0) {
+                                        trabajosTexto = trabajosEstudiante.map(trabajo => 
+                                            `Fecha: ${trabajo.date}, Tipo: ${trabajo.type}, ID: ${trabajo.id}`
+                                        ).join('\n');
+                                    } else {
+                                        trabajosTexto = 'No hay trabajos registrados';
+                                    }
+                                    datosColumna2.push(trabajosTexto);
+
                                     tableHTML += `
                                         <tr>
-                                            <td style="padding: 8px; border: 1px solid #ddd;">${trabajo.id}</td>
-                                            <td style="padding: 8px; border: 1px solid #ddd;">${trabajo.type}</td>
-                                            <td style="padding: 8px; border: 1px solid #ddd;">${trabajo.date}</td>
+                                            <td style="padding: 8px; border: 1px solid #ddd; vertical-align: top;">
+                                                ${estudiante.name}
+                                            </td>
+                                            <td style="padding: 8px; border: 1px solid #ddd;">
+                                    `;
+
+                                    if (trabajosEstudiante.length > 0) {
+                                        tableHTML += `<ul style="margin: 0; padding-left: 20px;">`;
+                                        trabajosEstudiante.forEach(trabajo => {
+                                            tableHTML += `
+                                                <li style="margin-bottom: 5px;">
+                                                    <strong>Fecha:</strong> ${trabajo.date}<br>
+                                                    <strong>Tipo:</strong> ${trabajo.type}<br>
+                                                    <strong>ID:</strong> ${trabajo.id}
+                                                </li>
+                                            `;
+                                        });
+                                        tableHTML += `</ul>`;
+                                    } else {
+                                        tableHTML += `<em>No hay trabajos registrados</em>`;
+                                    }
+
+                                    tableHTML += `
+                                            </td>
                                         </tr>
                                     `;
                                 });
                             } else {
                                 tableHTML += `
                                     <tr>
-                                        <td colspan="3" style="padding: 8px; border: 1px solid #ddd; text-align: center;">
-                                            No hay trabajos registrados para ${nombreMes}
+                                        <td colspan="2" style="padding: 8px; border: 1px solid #ddd; text-align: center;">
+                                            No hay estudiantes en este grupo
                                         </td>
                                     </tr>`;
                             }
 
                             tableHTML += `</tbody></table>`;
+
+                            // Función para copiar al portapapeles
+                            const copiarAlPortapapeles = (texto) => {
+                                navigator.clipboard.writeText(texto).then(() => {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Copiado',
+                                        text: 'Los datos han sido copiados al portapapeles',
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    });
+                                }).catch(err => {
+                                    console.error('Error al copiar: ', err);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'No se pudo copiar al portapapeles'
+                                    });
+                                });
+                            };
+
+                            // Botones para copiar
+                            const botonesCopiar = `
+                                <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+                                    <button id="copiarColumna1" class="swal2-confirm swal2-styled" style="background-color: #4CAF50;">
+                                        Copiar Nombres
+                                    </button>
+                                    <button id="copiarColumna2" class="swal2-confirm swal2-styled" style="background-color: #2196F3;">
+                                        Copiar Trabajos
+                                    </button>
+                                </div>
+                            `;
 
                             Swal.fire({
                                 title: 'Resumen de Trabajos',
@@ -161,11 +224,21 @@ function informeTrabajoCotidiano() {
                                         <p><strong>Mes:</strong> ${nombreMes} (${diasDelMes} días)</p>
                                     </div>
                                     ${tableHTML}
+                                    ${botonesCopiar}
                                 `,
                                 icon: 'info',
-                                width: '700px',
+                                width: '900px',
                                 customClass: {
                                     popup: 'custom-swal-popup'
+                                },
+                                didOpen: () => {
+                                    document.getElementById('copiarColumna1').addEventListener('click', () => {
+                                        copiarAlPortapapeles(datosColumna1.join('\n'));
+                                    });
+                                    
+                                    document.getElementById('copiarColumna2').addEventListener('click', () => {
+                                        copiarAlPortapapeles(datosColumna2.join('\n\n'));
+                                    });
                                 }
                             });
                         }

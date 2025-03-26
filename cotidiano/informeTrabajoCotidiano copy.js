@@ -1,5 +1,21 @@
 function informeTrabajoCotidiano() {
     const grupos = JSON.parse(localStorage.getItem('grupos')) || [];
+    const materias = JSON.parse(localStorage.getItem('materias')) || [];
+    const estudiantes = JSON.parse(localStorage.getItem('students')) || [];
+
+    // Obtener todos los trabajos cotidianos de todos los estudiantes con información del estudiante
+    let trabajoCotidiano = [];
+    estudiantes.forEach(estudiante => {
+        if (estudiante.trabajoCotidiano && estudiante.trabajoCotidiano.length > 0) {
+            trabajoCotidiano = trabajoCotidiano.concat(estudiante.trabajoCotidiano.map(t => ({
+                ...t,
+                grupoId: t.grupoId.toString(), // Asegurar que grupoId sea string
+                materiaId: t.materiaId.toString(), // Asegurar que materiaId sea string
+                estudianteName: estudiante.name, // Añadir el nombre del estudiante
+                estudianteId: estudiante.id.toString() // Añadir el ID del estudiante
+            })));
+        }
+    });
 
     if (grupos.length === 0) {
         Swal.fire('Error', 'No se encontraron grupos en el almacenamiento local.', 'error');
@@ -23,8 +39,7 @@ function informeTrabajoCotidiano() {
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            const grupoSeleccionado = result.value;
-            const materias = JSON.parse(localStorage.getItem('materias')) || [];
+            const grupoSeleccionado = grupos.find(grupo => grupo.id.toString() === result.value.toString());
 
             if (materias.length === 0) {
                 Swal.fire('Error', 'No se encontraron materias en el almacenamiento local.', 'error');
@@ -48,18 +63,26 @@ function informeTrabajoCotidiano() {
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    const materiaSeleccionada = result.value;
+                    const materiaSeleccionada = materias.find(materia => materia.id.toString() === result.value.toString());
 
                     const meses = [
-                        { nombre: 'Enero', dias: 31 }, { nombre: 'Febrero', dias: 28 }, { nombre: 'Marzo', dias: 31 },
-                        { nombre: 'Abril', dias: 30 }, { nombre: 'Mayo', dias: 31 }, { nombre: 'Junio', dias: 30 },
-                        { nombre: 'Julio', dias: 31 }, { nombre: 'Agosto', dias: 31 }, { nombre: 'Septiembre', dias: 30 },
-                        { nombre: 'Octubre', dias: 31 }, { nombre: 'Noviembre', dias: 30 }, { nombre: 'Diciembre', dias: 31 }
+                        { nombre: 'Enero', dias: 31, value: 0 }, 
+                        { nombre: 'Febrero', dias: 28, value: 1 }, 
+                        { nombre: 'Marzo', dias: 31, value: 2 },
+                        { nombre: 'Abril', dias: 30, value: 3 }, 
+                        { nombre: 'Mayo', dias: 31, value: 4 }, 
+                        { nombre: 'Junio', dias: 30, value: 5 },
+                        { nombre: 'Julio', dias: 31, value: 6 }, 
+                        { nombre: 'Agosto', dias: 31, value: 7 }, 
+                        { nombre: 'Septiembre', dias: 30, value: 8 },
+                        { nombre: 'Octubre', dias: 31, value: 9 }, 
+                        { nombre: 'Noviembre', dias: 30, value: 10 }, 
+                        { nombre: 'Diciembre', dias: 31, value: 11 }
                     ];
 
                     let selectMesHTML = '<select id="mesSelect" class="swal2-select">';
-                    meses.forEach((mes, index) => {
-                        selectMesHTML += `<option value="${index}">${mes.nombre} (${mes.dias} días)</option>`;
+                    meses.forEach(mes => {
+                        selectMesHTML += `<option value="${mes.value}">${mes.nombre} (${mes.dias} días)</option>`;
                     });
                     selectMesHTML += '</select>';
 
@@ -67,163 +90,91 @@ function informeTrabajoCotidiano() {
                         title: 'Selecciona el mes',
                         html: selectMesHTML,
                         showCancelButton: true,
-                        confirmButtonText: 'Siguiente',
+                        confirmButtonText: 'Finalizar',
                         preConfirm: () => {
-                            const mesIndex = document.getElementById('mesSelect').value;
+                            const mesValue = document.getElementById('mesSelect').value;
+                            const mesSeleccionado = meses.find(m => m.value.toString() === mesValue.toString());
                             return { 
-                                mesIndex: parseInt(mesIndex), 
-                                diasDelMes: meses[mesIndex].dias,
-                                nombreMes: meses[mesIndex].nombre
+                                mesIndex: mesSeleccionado.value, 
+                                diasDelMes: mesSeleccionado.dias,
+                                nombreMes: mesSeleccionado.nombre
                             };
                         }
                     }).then((result) => {
                         if (result.isConfirmed) {
                             const { mesIndex, diasDelMes, nombreMes } = result.value;
-                            const students = JSON.parse(localStorage.getItem('students')) || [];
 
-                            const estudiantesFiltrados = students.filter(student =>
-                                student.groupId == grupoSeleccionado && student.materiaId == materiaSeleccionada
-                            );
+                            // Filtrar los trabajos según selección
+                            const trabajosFiltrados = trabajoCotidiano.filter(trabajo => {
+                                try {
+                                    const fechaTrabajo = new Date(trabajo.date);
+                                    return trabajo.grupoId.toString() === grupoSeleccionado.id.toString() &&
+                                           trabajo.materiaId.toString() === materiaSeleccionada.id.toString() &&
+                                           fechaTrabajo.getMonth() === mesIndex;
+                                } catch (e) {
+                                    console.error("Error al procesar fecha:", trabajo.date, e);
+                                    return false;
+                                }
+                            });
 
-                            if (estudiantesFiltrados.length === 0) {
-                                Swal.fire('No hay estudiantes', 'No se encontraron estudiantes para este grupo y materia.', 'info');
-                                return;
-                            }
+                            // Ordenar por fecha y luego por nombre de estudiante
+                            trabajosFiltrados.sort((a, b) => {
+                                const dateDiff = new Date(a.date) - new Date(b.date);
+                                if (dateDiff !== 0) return dateDiff;
+                                return a.estudianteName.localeCompare(b.estudianteName);
+                            });
 
-                            let estudiantesHTML = `
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-sm">
-                                        <thead class="thead-dark">
-                                            <tr>
-                                                <th style="position: sticky; left: 0; background: #343a40; z-index: 10;">Nombre</th>
+                            // Crear tabla
+                            let tableHTML = `
+                                <table border="1" style="width:100%; border-collapse: collapse; margin-top: 10px;">
+                                    <thead>
+                                        <tr style="background-color: #f2f2f2;">
+                                            <th style="padding: 8px; border: 1px solid #ddd;">ID</th>
+                                            <th style="padding: 8px; border: 1px solid #ddd;">Estudiante</th>
+                                            <th style="padding: 8px; border: 1px solid #ddd;">Tipo</th>
+                                            <th style="padding: 8px; border: 1px solid #ddd;">Fecha</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                             `;
 
-                            // Encabezados de días
-                            for (let dia = 1; dia <= diasDelMes; dia++) {
-                                estudiantesHTML += `<th class="text-center">${dia}</th>`;
+                            if (trabajosFiltrados.length > 0) {
+                                trabajosFiltrados.forEach(trabajo => {
+                                    tableHTML += `
+                                        <tr>
+                                            <td style="padding: 8px; border: 1px solid #ddd;">${trabajo.id}</td>
+                                            <td style="padding: 8px; border: 1px solid #ddd;">${trabajo.estudianteName}</td>
+                                            <td style="padding: 8px; border: 1px solid #ddd;">${trabajo.type}</td>
+                                            <td style="padding: 8px; border: 1px solid #ddd;">${trabajo.date}</td>
+                                        </tr>
+                                    `;
+                                });
+                            } else {
+                                tableHTML += `
+                                    <tr>
+                                        <td colspan="4" style="padding: 8px; border: 1px solid #ddd; text-align: center;">
+                                            No hay trabajos registrados para ${nombreMes}
+                                        </td>
+                                    </tr>`;
                             }
-                            estudiantesHTML += `</tr></thead><tbody>`;
 
-                            estudiantesFiltrados.forEach(estudiante => {
-                                estudiantesHTML += `<tr><td style="position: sticky; left: 0; background: white; z-index: 5;">${estudiante.name}</td>`;
-
-                                // Crear mapa de trabajos por día para acceso rápido
-                                const trabajosPorDia = {};
-                                if (estudiante.trabajoCotidiano && Array.isArray(estudiante.trabajoCotidiano)) {
-                                    estudiante.trabajoCotidiano.forEach(trabajo => {
-                                        if (trabajo.dia !== undefined) {
-                                            trabajosPorDia[trabajo.dia] = trabajo.type || '?';
-                                        } else if (trabajo.fecha) {
-                                            // Si tiene fecha, extraemos el día
-                                            const fecha = new Date(trabajo.fecha);
-                                            if (!isNaN(fecha)) {
-                                                trabajosPorDia[fecha.getDate()] = trabajo.type || '?';
-                                            }
-                                        }
-                                    });
-                                }
-
-                                // Celdas para cada día del mes
-                                for (let dia = 1; dia <= diasDelMes; dia++) {
-                                    const valor = trabajosPorDia[dia] || '?';
-                                    const color = valor === '?' ? 'red' : 'black';
-                                    estudiantesHTML += `<td class="text-center" style="color: ${color}">${valor}</td>`;
-                                }
-
-                                estudiantesHTML += '</tr>';
-                            });
-
-                            estudiantesHTML += `</tbody></table></div>`;
+                            tableHTML += `</tbody></table>`;
 
                             Swal.fire({
-                                title: `Trabajo Cotidiano - ${nombreMes}`,
-                                width: '90%',
+                                title: 'Resumen de Trabajos',
                                 html: `
-                                    <div id="footerCopiado" class="p-2 bg-success text-white text-center mb-2" style="display:none; border-radius: 5px;">
-                                        <i class="fas fa-check-circle"></i> Copiado al portapapeles
+                                    <div style="margin-bottom: 15px;">
+                                        <p><strong>Grupo:</strong> ${grupoSeleccionado.nombre}</p>
+                                        <p><strong>Materia:</strong> ${materiaSeleccionada.nombre}</p>
+                                        <p><strong>Mes:</strong> ${nombreMes} (${diasDelMes} días)</p>
                                     </div>
-                                    ${estudiantesHTML}
-                                    <div class="d-flex justify-content-between mt-3">
-                                        <button id="copiarNombresBtn" class="btn btn-primary">
-                                            <i class="fas fa-copy"></i> Copiar Nombres
-                                        </button>
-                                        <button id="copiarTodoBtn" class="btn btn-primary">
-                                            <i class="fas fa-copy"></i> Copiar Todo
-                                        </button>
-                                        <button id="copiarTiposBtn" class="btn btn-primary">
-                                            <i class="fas fa-copy"></i> Copiar Puntuación
-                                        </button>
-                                    </div>
+                                    ${tableHTML}
                                 `,
-                                showCloseButton: true,
-                                showConfirmButton: false,
+                                icon: 'info',
+                                width: '800px',
                                 customClass: {
-                                    container: 'swal-wide-container'
+                                    popup: 'custom-swal-popup'
                                 }
-                            });
-
-                            // Función para copiar al portapapeles
-                            const copiarAlPortapapeles = (texto) => {
-                                navigator.clipboard.writeText(texto).then(() => {
-                                    const footer = document.getElementById('footerCopiado');
-                                    if (footer) {
-                                        footer.style.display = 'block';
-                                        setTimeout(() => {
-                                            footer.style.display = 'none';
-                                        }, 2000);
-                                    }
-                                }).catch(() => {
-                                    Swal.fire('Error', 'No se pudo copiar al portapapeles', 'error');
-                                });
-                            };
-
-                            // Copiar solo nombres
-                            document.getElementById('copiarNombresBtn').addEventListener('click', () => {
-                                const nombres = estudiantesFiltrados.map(e => e.name).join('\n');
-                                copiarAlPortapapeles(nombres);
-                            });
-
-                            // Copiar todo (nombres + datos)
-                            document.getElementById('copiarTodoBtn').addEventListener('click', () => {
-                                let texto = 'Nombre\t' + Array.from({length: diasDelMes}, (_, i) => i+1).join('\t') + '\n';
-                                
-                                estudiantesFiltrados.forEach(estudiante => {
-                                    const trabajosPorDia = {};
-                                    if (estudiante.trabajoCotidiano) {
-                                        estudiante.trabajoCotidiano.forEach(t => {
-                                            if (t.dia !== undefined) trabajosPorDia[t.dia] = t.type || '?';
-                                        });
-                                    }
-                                    
-                                    texto += estudiante.name + '\t';
-                                    for (let dia = 1; dia <= diasDelMes; dia++) {
-                                        texto += (trabajosPorDia[dia] || '?') + '\t';
-                                    }
-                                    texto += '\n';
-                                });
-                                
-                                copiarAlPortapapeles(texto);
-                            });
-
-                            // Copiar solo puntuaciones
-                            document.getElementById('copiarTiposBtn').addEventListener('click', () => {
-                                let texto = '';
-                                
-                                estudiantesFiltrados.forEach(estudiante => {
-                                    const trabajosPorDia = {};
-                                    if (estudiante.trabajoCotidiano) {
-                                        estudiante.trabajoCotidiano.forEach(t => {
-                                            if (t.dia !== undefined) trabajosPorDia[t.dia] = t.type || '?';
-                                        });
-                                    }
-                                    
-                                    for (let dia = 1; dia <= diasDelMes; dia++) {
-                                        texto += (trabajosPorDia[dia] || '?') + '\t';
-                                    }
-                                    texto += '\n';
-                                });
-                                
-                                copiarAlPortapapeles(texto.trim());
                             });
                         }
                     });
