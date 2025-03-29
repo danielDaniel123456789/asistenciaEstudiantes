@@ -1,6 +1,6 @@
 function loadStudents(students = null) {
     // Si no se pasan estudiantes, obtenerlos desde localStorage
-    students = students || (localStorage.getItem('students') ? JSON.parse(localStorage.getItem('students')) : []);
+    students = obtenerEstudiantes();
     
     const studentList = document.getElementById('studentList');
     studentList.innerHTML = ''; // Limpiar lista antes de cargar
@@ -21,7 +21,7 @@ function loadStudents(students = null) {
                         ✏️
                         <!-- Carácter de lápiz -->
                     </button>
-                    ${capitalizeWords(student.name)} --${student.id}
+                    ${capitalizeWords(student.name)} --${student.id}  📖 <span class="badge bg-warning"> ${obtenerNombreMateria(student.materiaId)} </span> 
                 </h5>
                 <p class="card-text">Cédula: ${student.cedula || 'No disponible'}</p> <!-- Mostrar cédula -->
 

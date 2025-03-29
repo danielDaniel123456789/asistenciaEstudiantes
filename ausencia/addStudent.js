@@ -14,11 +14,6 @@ function addStudent() {
         return;
     }
 
-    // Crear las opciones del selector de grupos
-    let grupoOptions = grupos.map(grupo => `<option value="${grupo.id}">${grupo.nombre}</option>`).join('');
-
-    // Crear las opciones del selector de materias
-    let materiaOptions = materias.map(materia => `<option value="${materia.id}">${materia.nombre}</option>`).join(''); 
 
     // Abrir SweetAlert para agregar un estudiante
     Swal.fire({
@@ -29,12 +24,8 @@ function addStudent() {
             <br> <br>
 
            ${studentGroup()}
-       
             <br>
-            <select id="studentMateria" class="form-select">
-                <option value="" disabled selected>Selecciona una materia</option>
-                ${materiaOptions}
-            </select>
+           ${studentMateria()}
         `,
         focusConfirm: false,
         showCancelButton: true,
