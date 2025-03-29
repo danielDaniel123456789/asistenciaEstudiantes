@@ -1,7 +1,7 @@
 function addStudent() {
     // Cargar los grupos y materias desde el localStorage de forma segura
-    let grupos = localStorage.getItem('grupos') ? JSON.parse(localStorage.getItem('grupos')) : [];
-    let materias = localStorage.getItem('materias') ? JSON.parse(localStorage.getItem('materias')) : [];
+    let grupos = obtenerGrupos();
+    let materias =obtenerMaterias();
 
     // Verificar si hay grupos o materias para mostrar
     if (grupos.length === 0) {
@@ -27,10 +27,9 @@ function addStudent() {
             <input id="studentName" class="swal2-input" placeholder="Nombre">
             <input id="studentCedula" class="swal2-input" placeholder="Cédula (opcional)" type="text">
             <br> <br>
-            <select id="studentGroup" class="form-select">
-                <option value="" disabled selected>Selecciona un grupo</option>
-                ${grupoOptions}
-            </select>
+
+           ${studentGroup()}
+       
             <br>
             <select id="studentMateria" class="form-select">
                 <option value="" disabled selected>Selecciona una materia</option>

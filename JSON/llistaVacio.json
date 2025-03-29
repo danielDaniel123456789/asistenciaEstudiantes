@@ -5,22 +5,16 @@
       "cedula": "1252232522",
       "absences": [         ],
       "materiaId": "1",
-      "trabajoCotidiano": [
-        
-      ],
+      "trabajoCotidiano": [   ],
       "groupId": "1"
     },
     {
       "id": 2,
       "name": "Carlos",
       "cedula": "57293839",
-      "absences": [
-        
-      ],
+      "absences": [  ],
       "materiaId": "1",
-      "trabajoCotidiano": [
-        
-      ],
+      "trabajoCotidiano": [  ],
       "groupId": "1"
     }
   ]
