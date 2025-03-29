@@ -241,7 +241,7 @@ function informeTrabajoCotidiano() {
         let textoParaCopiar = datosClonados.join('');
     
         // Verificar si la cadena termina con una coma seguida de un espacio y eliminarla
-        if (textoParaCopiar.endsWith(', ')) {
+        if (textoParaCopiar.endsWith('')) {
             textoParaCopiar = textoParaCopiar.slice(0, -2); // Elimina la última coma y espacio
         }
     
