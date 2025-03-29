@@ -3,7 +3,6 @@ function informeMesAsistencia() {
     const students = JSON.parse(localStorage.getItem('students')) || [];
     const grupos = [...new Set(students.map(student => student.groupId))]; // Obtener IDs únicos de grupos
     
-
     // Crear HTML del select para los meses y grupos
     const meses = [
         { id: 1, nombre: 'Enero', dias: 31 },
