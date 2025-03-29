@@ -70,8 +70,20 @@ function informeMesAsistencia() {
             }
 
             // Crear la tabla de asistencia
-            let estudiantesHTML = '<table class="table p-2">';
-            estudiantesHTML += '<thead><tr><th>Nombre</th><th>Ausencias</th></tr></thead><tbody>';
+            let estudiantesHTML = 
+ ` 
+           <div class="p-3">
+           <div class="btn-group" role="group" aria-label="Basic example">
+  <button type="button"  id="copiarNombresBtn" class="btn btn-primary">Copiar Nombres</button>
+
+  <button type="button" id="copiarAusenciasBtn" class="btn btn-primary">Copiar Ausencias</button>
+</div>
+               
+</div>
+
+   `+
+            '<table class="table p-2">';
+            estudiantesHTML += '<br><thead><tr><th>Nombre</th><th>Ausencias</th></tr></thead><tbody>';
 
             // Preparar datos para copiar
             let nombresParaCopiar = [];
@@ -117,9 +129,7 @@ function informeMesAsistencia() {
             Swal.fire({
                 html: `
                     <div>${estudiantesHTML}</div>
-                    <button id="copiarNombresBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;">Copiar Nombres</button>
-                    <button id="copiarAusenciasBtn" class="swal2-confirm swal2-styled" style="margin-top: 20px;">Copiar Ausencias (Formato Excel)</button>
-                `,
+              `,
                 showCloseButton: true,
                 showCancelButton: true,
                 cancelButtonText: 'Cancelar',
