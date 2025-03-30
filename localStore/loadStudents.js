@@ -14,11 +14,11 @@ students.forEach((student) => {
 const studentItem = document.createElement('div');
 studentItem.classList.add('col-12', 'col-md-6', 'col-lg-4', 'student-card');
 studentItem.innerHTML = `
-<div class="card text-center">
+<div class=" text-center">
  
-    <div class="card-body" onclick="opcionesRegistrar('${student.id}', '${obtenerNombreMateria(student.materiaId)}', 
+    <div class="cargarEstudiantes" onclick="opcionesRegistrar('${student.id}', '${obtenerNombreMateria(student.materiaId)}', 
    ' ${obtenerNombreGrupo(student.groupId)}', '${student.cedula}  ')">
-    <h6 class="text-danger"> ${obtenerNombreMateria(student.materiaId)} ${obtenerNombreGrupo(student.groupId)}</h6>
+
          <h5> ${capitalizeWords(student.name)} --${student.id}  
          
             </h5>

@@ -12,6 +12,9 @@ p.card-text.text-secondary.cedula {
 
     top: 4px;
 }
+.cargarEstudiantes{
+    color: white;
+}
 
 div:where(.swal2-container) div:where(.swal2-html-container) {
     overflow: hidden;
