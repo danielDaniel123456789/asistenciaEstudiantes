@@ -68,18 +68,19 @@ function informeTrabajoCotidiano() {
                     });
 
                     let tableHTML = `
-                    <table class="table" id="trabajoTable">
-                        <thead>
-                            <tr>
-                                <th>Estudiante</th>`;
+                    <div style="overflow-x: auto;">
+                        <table class="table" id="trabajoTable">
+                            <thead>
+                                <tr>
+                                    <th>Estudiante</th>`;
 
                     for (let i = 1; i <= maxTrabajos; i++) {
-                        tableHTML += `<th>Puntos</th>`;
+                        tableHTML += `<th>✅</th>`;
                     }
 
                     tableHTML += `</tr>
-                        </thead>
-                        <tbody>`;
+                            </thead>
+                            <tbody>`;
 
                     estudiantesDelGrupo.forEach(estudiante => {
                         tableHTML += `<tr><td>${estudiante.name}</td>`;
@@ -92,22 +93,21 @@ function informeTrabajoCotidiano() {
                         tableHTML += `</tr>`;
                     });
 
-                    tableHTML += `</tbody></table>`;
+                    tableHTML += `</tbody></table>
+                    </div>`;
 
                     Swal.fire({
-                     
                         html: `
                         <div class="p-2">
                             <h5><strong>Grupo:</strong> ${grupoSeleccionado.nombre}</h5>
                             <h5><strong>Materia:</strong> ${materiaSeleccionada.nombre}</h5>
                         </div>
                         <div>
-                            <button class="swal2-confirm swal2-styled" onclick="copiarNombres()">Copiar puntos</button>
-                            <button class="swal2-confirm swal2-styled" onclick="copiarTrabajos()">Copiar Trabajos</button>
+                            <button class="swal2-confirm swal2-styled" onclick="copiarNombres()">Copiar nombres</button>
+                            <button class="swal2-confirm swal2-styled" onclick="copiarTrabajos()">Copiar trabajos</button>
                         </div>
                         ${tableHTML}`,
-                   
-                        width: '900px'
+                        width: '1000px' // Ancho suficiente para que la tabla tenga espacio
                     });
                 }
             });
