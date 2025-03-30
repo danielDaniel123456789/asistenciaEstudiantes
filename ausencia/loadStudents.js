@@ -15,12 +15,14 @@ const studentItem = document.createElement('div');
 studentItem.classList.add('col-12', 'col-md-6', 'col-lg-4', 'student-card');
 studentItem.innerHTML = `
 <div class="card text-center">
-    <div class="card-body" onclick="opcionesRegistrar('${student.id}')">
+ 
+    <div class="card-body" onclick="opcionesRegistrar('${student.id}', '${obtenerNombreMateria(student.materiaId)}', 
+   ' ${obtenerNombreGrupo(student.groupId)}', '${student.cedula}  ')">
     <h6 class="text-danger"> ${obtenerNombreMateria(student.materiaId)} ${obtenerNombreGrupo(student.groupId)}</h6>
          <h5> ${capitalizeWords(student.name)} --${student.id}  
          
             </h5>
-        <p class="card-text text-secondary cedula" >Cédula: ${student.cedula || 'No disponible'}</p> <!-- Mostrar cédula -->
+        <p class="card-text text-secondary cedula" > ${obtenerNombreMateria(student.materiaId)} ${obtenerNombreGrupo(student.groupId)} </p> <!-- Mostrar cédula -->
     
     </div>
 </div>
