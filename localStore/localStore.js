@@ -3,10 +3,6 @@ function obtenerEstudiantes() {
 return localStorage.getItem('students') ? JSON.parse(localStorage.getItem('students')) : [];
 }
 
-
-
-
-
 function obtenerNombreEstudiante(id) {
   console.log(`Buscando estudiante con ID: ${id}`);
   
@@ -30,9 +26,6 @@ function obtenerNombreEstudiante(id) {
   }
 }
 
-
-
-
 function obtenerNombreMateria(id) {
 // Obtener los datos del localStorage y parsearlos a un array
 let materias = JSON.parse(localStorage.getItem("materias")) || [];
@@ -48,6 +41,20 @@ function obtenerGrupos() {
 let grupos = localStorage.getItem('grupos') ? JSON.parse(localStorage.getItem('grupos')) : [];
 return grupos;
 }
+
+
+function obtenerNombreGrupo(id) { 
+  let grupos = localStorage.getItem('grupos') ? JSON.parse(localStorage.getItem('grupos')) : [];
+  
+  // Convertimos id a número por si se almacena como string
+  id = Number(id);
+  
+  let grupoEncontrado = grupos.find(grupo => Number(grupo.id) === id);
+  
+  return grupoEncontrado ? grupoEncontrado.nombre : null; 
+}
+
+
 function obtenerMaterias() {
 let materias = localStorage.getItem('materias') ? JSON.parse(localStorage.getItem('materias')) : [];
 return materias;

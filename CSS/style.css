@@ -1,4 +1,18 @@
 
+
+a {
+    text-decoration: none;
+}
+span.btn.btn-link.btn-sm {
+    text-decoration: none;
+}
+
+p.card-text.text-secondary.cedula {
+    position: absolute;
+
+    top: 4px;
+}
+
 div:where(.swal2-container) div:where(.swal2-html-container) {
     overflow: hidden;
   }
