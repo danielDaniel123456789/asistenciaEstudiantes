@@ -8,8 +8,7 @@ function opcionesRegistrar(id, materia, grupo, cedula) {
         <h5>Grupo: ${grupo}</h5>    
         <h6>Cédula: ${cedula}</h6>
   
-        <h6 class="text-danger"> ${obtenerNombreMateria(id)} ${obtenerNombreGrupo(id)}</h6> 
-    
+     
             <table class="table">
                 <tr>
                     <td><button type="button" class="btn btn-primary" onclick="registerAbsence(${id})">Ausencia</button>

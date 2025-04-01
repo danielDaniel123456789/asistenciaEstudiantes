@@ -1,33 +1,50 @@
 function loadStudents(students = null) {
-// Si no se pasan estudiantes, obtenerlos desde localStorage
-students = obtenerEstudiantes();
+    // Si no se pasan estudiantes, obtenerlos desde localStorage
+    students = obtenerEstudiantes();
 
-const studentList = document.getElementById('studentList');
-studentList.innerHTML = ''; // Limpiar lista antes de cargar
+    const studentList = document.getElementById('studentList');
+    studentList.innerHTML = ''; // Limpiar lista antes de cargar
 
-// Si no hay estudiantes, se muestra un mensaje
-if (students.length === 0) {
-studentList.innerHTML = "<p>No hay estudiantes registrados.</p>";
+    // Si no hay estudiantes, se muestra un mensaje
+    if (students.length === 0) {
+        studentList.innerHTML = "<p>No hay estudiantes registrados.</p>";
+        return;
+    }
+
+    students.forEach((student) => {
+        const studentItem = document.createElement('div');
+        studentItem.classList.add('d-flex', 'align-items-center', 'p-2', 'border-bottom', 'student-card');
+        studentItem.style.cursor = "pointer";
+        studentItem.onclick = function () {
+            opcionesRegistrar(student.id, obtenerNombreMateria(student.materiaId), obtenerNombreGrupo(student.groupId), student.cedula);
+        };
+
+        // Crear avatar con la inicial
+        const avatar = document.createElement('div');
+        avatar.classList.add('avatar');
+        avatar.innerText = student.name.charAt(0).toUpperCase();
+        avatar.style.backgroundColor = getRandomColor(); // Color aleatorio
+
+        // Contenedor de información del estudiante
+        const infoContainer = document.createElement('div');
+        infoContainer.classList.add('ms-3');
+
+        infoContainer.innerHTML = `
+        <div class="espacioNombre">
+           <h5 class="mb-0 text-white">${capitalizeWords(student.name)}</h5>
+            <p class="small text-white">${obtenerNombreMateria(student.materiaId)} - ${obtenerNombreGrupo(student.groupId)}</p>
+  
+    </div> 
+       `;
+
+        studentItem.appendChild(avatar);
+        studentItem.appendChild(infoContainer);
+        studentList.appendChild(studentItem);
+    });
 }
 
-students.forEach((student) => {
-const studentItem = document.createElement('div');
-studentItem.classList.add('col-12', 'col-md-6', 'col-lg-4', 'student-card');
-studentItem.innerHTML = `
-<div class=" text-center">
- 
-    <div class="cargarEstudiantes" onclick="opcionesRegistrar('${student.id}', '${obtenerNombreMateria(student.materiaId)}', 
-   ' ${obtenerNombreGrupo(student.groupId)}', '${student.cedula}  ')">
-
-         <h5> ${capitalizeWords(student.name)} --${student.id}  
-         
-            </h5>
-        <p class="card-text text-secondary cedula" > ${obtenerNombreMateria(student.materiaId)} ${obtenerNombreGrupo(student.groupId)} </p> <!-- Mostrar cédula -->
-    
-    </div>
-</div>
-`;
-studentList.appendChild(studentItem);
-});
+// Función para obtener un color aleatorio para el avatar
+function getRandomColor() {
+    const colors = ['#FF5733', '#33d3ff', '#3357FF', '#F39C12', '#9B59B6', '#1ABC9C'];
+    return colors[Math.floor(Math.random() * colors.length)];
 }
-
