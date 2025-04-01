@@ -1,6 +1,8 @@
 function loadStudents(students = null) {
     // Si no se pasan estudiantes, obtenerlos desde localStorage
-    students = obtenerEstudiantes();
+    if (students === null) {
+        students = obtenerEstudiantes();
+    }
 
     const studentList = document.getElementById('studentList');
     studentList.innerHTML = ''; // Limpiar lista antes de cargar
@@ -33,9 +35,7 @@ function loadStudents(students = null) {
         <div class="espacioNombre">
            <h5 class="mb-0 text-white">${capitalizeWords(student.name)}</h5>
             <p class="small text-white">${obtenerNombreMateria(student.materiaId)} - ${obtenerNombreGrupo(student.groupId)}</p>
-  
-    </div> 
-       `;
+        </div>`;
 
         studentItem.appendChild(avatar);
         studentItem.appendChild(infoContainer);
@@ -43,8 +43,4 @@ function loadStudents(students = null) {
     });
 }
 
-// Función para obtener un color aleatorio para el avatar
-function getRandomColor() {
-    const colors = ['#FF5733', '#33d3ff', '#3357FF', '#F39C12', '#9B59B6', '#1ABC9C'];
-    return colors[Math.floor(Math.random() * colors.length)];
-}
+
