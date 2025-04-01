@@ -63,6 +63,7 @@
      <script src="importarEstudiantes/datosGeneralesEspecificos.js"></script>
      <script src="localStore/localStore.js"></script>
      <script src="localStore/opcionesRegistrar.js"></script>
+     <script src="localStore/informesPresentar.js"></script>
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   />
@@ -80,27 +81,12 @@
             <h3 class="my-4 text-white">Control de Ausencias</h3>
 
         
-
-            <h6 class="text-white">    Excel SAP</h6>
-
-       
-            <a href="#" onclick="informeTrabajoCotidiano()">Calculo Trabajo cotidiano</a>
-            <br>
-            <a href="#" onclick="informeGeneralTareas()">informeGeneralTareas</a>
-            <br>
-
-            <a href="#" onclick="informeGeneralPruebas()">informeGeneralPruebas</a>
-            <br>
-
-            <a href="#" onclick="informeMesAsistencia()">informeMesAsistencia</a>//
-
-    
-
-         
-            
-            <input type="text" id="nombreLocalStore" placeholder="Nombre de LocalStorage">
-            <input type="number" id="id" placeholder="ID">
-            <button onclick="cargarDatos()">Buscar</button>
+<div hidden>
+    <input type="text" id="nombreLocalStore" placeholder="Nombre de LocalStorage">
+    <input type="number" id="id" placeholder="ID">
+    <button onclick="cargarDatos()">Buscar</button>
+</div>
+          
             <div id="studentList" class="row"></div>
         </div>
         <div id="materiaList" class="row"></div> <!-- Contenedor donde se cargan las materias -->
@@ -113,7 +99,8 @@
         <div class="btn-group" role="group">
             <button class="btn btn-primary" onclick="opciones()">Insertar</button>
             <input type="text" id="buscarEstudiante" class="form-control" placeholder="Buscar por nombre o cédula" oninput="filterStudents()">
-          </div>
+            <button class="btn btn-primary" onclick="informesPresentar()">Informes</button>
+        </div>
           
            
        

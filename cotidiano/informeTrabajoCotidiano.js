@@ -18,6 +18,7 @@ function informeTrabajoCotidiano() {
         title: 'Selecciona un grupo',
         html: selectGruposHTML,
         showCancelButton: true,
+        showCloseButton: true,
         confirmButtonText: 'Siguiente',
         preConfirm: () => {
             const grupoSeleccionado = document.getElementById('grupoSelect').value;
@@ -42,6 +43,7 @@ function informeTrabajoCotidiano() {
                 title: 'Selecciona una materia',
                 html: selectMateriasHTML,
                 showCancelButton: true,
+                showCloseButton: true,
                 confirmButtonText: 'Siguiente',
                 preConfirm: () => {
                     const materiaSeleccionada = document.getElementById('materiaSelect').value;
@@ -72,7 +74,7 @@ function informeTrabajoCotidiano() {
                         <table class="table" id="trabajoTable">
                             <thead>
                                 <tr>
-                                    <th>Estudiante</th>`;
+                                    <th>✅</th>`;
 
                     for (let i = 1; i <= maxTrabajos; i++) {
                         tableHTML += `<th>✅</th>`;
@@ -118,13 +120,25 @@ function informeTrabajoCotidiano() {
 function copiarNombres() {
     let nombres = [];
     document.querySelectorAll("#trabajoTable tbody tr td:first-child").forEach(td => {
-        nombres.push(td.textContent);
+        nombres.push(td.innerText.trim());
     });
 
-    navigator.clipboard.writeText(nombres.join("\n")).then(() => {
+    const textoCopiar = nombres.join("\n");
+
+    navigator.clipboard.writeText(textoCopiar).then(() => {
+        const footer = document.getElementById('footerCopiado');
+        if (footer) {
+            footer.style.display = 'block';
+            setTimeout(() => {
+                footer.style.display = 'none';
+            }, 4000);
+        }
         Swal.fire('Copiado', 'Nombres copiados al portapapeles', 'success');
+    }).catch(() => {
+        Swal.fire('Error', 'No se pudieron copiar los nombres', 'error');
     });
 }
+
 
 function copiarTrabajos() {
     let trabajos = [];
