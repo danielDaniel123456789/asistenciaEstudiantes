@@ -1,38 +1,70 @@
 function mostrarModalCaducot() {
-    // Seleccionar una clave aleatoria del array
+    let intentosRestantes = localStorage.getItem('conteoCodigoActivacion');
+
+    if (intentosRestantes === null) {
+        intentosRestantes = 10;
+    } else {
+        intentosRestantes = parseInt(intentosRestantes, 10);
+    }
+
     const claveAleatoria = claves[Math.floor(Math.random() * claves.length)];
 
     Swal.fire({
         html: `
             <h5>Código de Activación:</h5>
-            <h3>${claveAleatoria.slice(0, 3)}</h3> <!-- Muestra los primeros 3 caracteres de la clave aleatoria -->
+            <h3>${claveAleatoria.slice(0, 3)}</h3>
             <input id="claveInput" class="swal2-input" placeholder="Escribe la clave completa">
+            <p>Intentos restantes: <b>${intentosRestantes}</b></p>
         `,
         focusConfirm: false,
-        showCancelButton: true,
+        showCancelButton: intentosRestantes > 1, 
         confirmButtonText: 'Verificar',
         allowOutsideClick: false,
         preConfirm: () => {
             const claveInput = document.getElementById('claveInput').value.trim();
 
-            // Verificar si la clave ingresada coincide con la clave aleatoria seleccionada
             if (claveInput === claveAleatoria) {
-                // Si la clave es correcta, mostrar mensaje de éxito y cerrar el modal
                 Swal.fire({
                     icon: 'success',
                     title: 'Clave correcta',
                     text: 'Has ingresado la clave correctamente.',
                 });
 
-                // Guardar el estado de usuario registrado como 1 en localStorage
                 localStorage.setItem('estadoUsuarioRegistrado', JSON.stringify(1));
-
-                return true; // Retorna true para cerrar el modal
+                return true;
             } else {
-                Swal.showValidationMessage('La clave ingresada no es correcta.');
-                return false; // No cierra el modal si la clave es incorrecta
+                intentosRestantes--;
+
+                if (intentosRestantes <= 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Acceso bloqueado',
+                        text: 'Has agotado todos tus intentos.',
+                    });
+
+                    localStorage.setItem('conteoCodigoActivacion', "0");
+                    return false;
+                } else {
+                    localStorage.setItem('conteoCodigoActivacion', intentosRestantes.toString());
+                    Swal.showValidationMessage(`Clave incorrecta. Intentos restantes: ${intentosRestantes}`);
+                    return false;
+                }
             }
         },
-        footer: `<a href="https://wa.me/50685502748?text=Contacta%20a%20Daniel%20para%20que%20te%20pase%20la%20clave%20de%20acceso." target="_blank">¿No tienes la clave? Contacta a Daniel</a>`
+        footer: `<a href="https://wa.me/50685502748?text=Contacta%20a%20Daniel%20para%20que%20te%20pase%20la%20clave%20de%20acceso." target="_blank">¿No tienes la clave? Contacta a Daniel</a>`,
+    }).then((result) => {
+        if (result.dismiss === Swal.DismissReason.cancel) {
+            // Si el usuario presiona "Cancelar", también se reduce un intento
+            intentosRestantes--;
+            localStorage.setItem('conteoCodigoActivacion', intentosRestantes.toString());
+
+            if (intentosRestantes <= 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Acceso bloqueado',
+                    text: 'Has agotado todos tus intentos.',
+                });
+            }
+        }
     });
 }
