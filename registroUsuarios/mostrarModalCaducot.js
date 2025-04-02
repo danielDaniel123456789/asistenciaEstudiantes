@@ -7,19 +7,24 @@ function mostrarModalCaducot() {
         intentosRestantes = parseInt(intentosRestantes, 10);
     }
 
-    const claveAleatoria = claves[Math.floor(Math.random() * claves.length)];
+    f = obtenerRegistroAsistencia();
+    console.log(f);
+    // Obtener el código de activación de la función obtenerFechaRegistro
+    const claveAleatoria = obtenerRegistroAsistencia(); // Usamos el valor devuelto por obtenerFechaRegistro
 
     Swal.fire({
         html: `
+        <div class="p-4">
             <h5>Código de Activación:</h5>
-            <h3>${claveAleatoria.slice(0, 3)}</h3>
+            <h3>${obtenerRegistroAsistencia().slice(0, 3)}</h3> <!-- Aquí mostramos los primeros 3 caracteres de la clave -->
             <input id="claveInput" class="swal2-input" placeholder="Escribe la clave completa">
             <p>Intentos restantes: <b>${intentosRestantes}</b></p>
+        </div>
         `,
         focusConfirm: false,
-        showCancelButton: intentosRestantes > 1, 
+        showCancelButton: intentosRestantes > 1,
         confirmButtonText: 'Verificar',
-        allowOutsideClick: false,
+        allowOutsideClick: false, // Impide el cierre del modal si no se verifica la clave
         preConfirm: () => {
             const claveInput = document.getElementById('claveInput').value.trim();
 
@@ -53,8 +58,8 @@ function mostrarModalCaducot() {
         },
         footer: `<a href="https://wa.me/50685502748?text=Contacta%20a%20Daniel%20para%20que%20te%20pase%20la%20clave%20de%20acceso." target="_blank">¿No tienes la clave? Contacta a Daniel</a>`,
     }).then((result) => {
+        // Si el usuario presiona "Cancelar", también se reduce un intento
         if (result.dismiss === Swal.DismissReason.cancel) {
-            // Si el usuario presiona "Cancelar", también se reduce un intento
             intentosRestantes--;
             localStorage.setItem('conteoCodigoActivacion', intentosRestantes.toString());
 

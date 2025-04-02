@@ -4,10 +4,10 @@ const claves = [
     "zxcvbn789",
     "rtyu5678",
     "poiuyt321",
-    "abcde9876",
+    "zp5cde9876",
     "ghijkl543",
     "mnbvcx654",
-    "12345abcd",
+    "w2345abcd",
     "letmein987",
     "securekey1",
     "sunshine12",
@@ -18,10 +18,10 @@ const claves = [
     "abcxyz456",
     "password01",
     "qazwsx987",
-    "123qwe456",
+    "j123qwe456",
     "randomkey1",
     "welcome01",
-    "ilovemom1",
+    "terovemom1",
     "superman987",
     "trustno123",
     "football99",
@@ -30,3 +30,9 @@ const claves = [
     "key987654",
     "safepassword"
 ];
+
+
+function clavesRegistro() {
+    const indiceAleatorio = Math.floor(Math.random() * claves.length);
+    return claves[indiceAleatorio];
+}
