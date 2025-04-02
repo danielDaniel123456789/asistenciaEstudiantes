@@ -2,9 +2,9 @@ function mostrarModalCaducot() {
     let intentosRestantes = localStorage.getItem('conteoCodigoActivacion');
 
     if (intentosRestantes === null) {
-        intentosRestantes = 10;
+        intentosRestantes = 25;
     } else {
-        intentosRestantes = parseInt(intentosRestantes, 10);
+        intentosRestantes = parseInt(intentosRestantes, 25);
     }
 
     f = obtenerRegistroAsistencia();
