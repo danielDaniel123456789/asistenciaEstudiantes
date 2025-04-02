@@ -1,4 +1,30 @@
+
+function iniciarNuevoAyo() {
+    const fechaRegistro = obtenerFechaRegistro();
+    const fechaActual = new Date();
+    
+    // Obtener el año de la fecha de registro
+    const anioRegistro = new Date(fechaRegistro).getFullYear();
+    
+    // Obtener el año de la fecha actual
+    const anioActual = fechaActual.getFullYear();
+    
+    // Comparar si el año actual es diferente al año de registro
+    if (anioActual !== anioRegistro) {
+        fechaRegistroCrear();
+        generarRegistroUsuario();
+        console.log("El año actual es diferente al año registrado.");
+        return true;
+        // Puedes agregar más acciones aquí si es necesario
+    } else {
+        console.log("El año actual es el mismo que el año registrado.");
+        return false;
+        
+    }
+}
+
 function usuarioRegistrado() {
+    iniciarNuevoAyo();
     // Asegurar que el valor obtenido de localStorage siempre sea un número válido
     const estadoUsuarioRegistrado = Number(localStorage.getItem('estadoUsuarioRegistrado'));
     console.log("obtenerFechaRegistro:", obtenerFechaRegistro());
