@@ -15,7 +15,7 @@ function loadStudents(students = null) {
 
     students.forEach((student) => {
         const studentItem = document.createElement('div');
-        studentItem.classList.add('d-flex', 'align-items-center', 'p-2', 'border-bottom', 'student-card');
+        studentItem.classList.add('d-flex', 'align-items-center', 'p-2',  'student-card');
         studentItem.style.cursor = "pointer";
         studentItem.onclick = function () {
             opcionesRegistrar(student.id, obtenerNombreMateria(student.materiaId), obtenerNombreGrupo(student.groupId), student.cedula);

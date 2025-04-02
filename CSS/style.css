@@ -31,6 +31,7 @@ div:where(.swal2-container) div:where(.swal2-html-container) {
   
           .student-card {
               margin: 10px 0;
+              border-bottom: #4d5656 solid 1px;
           }
   
           .student-card .btn {

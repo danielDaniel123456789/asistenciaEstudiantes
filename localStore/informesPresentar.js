@@ -1,7 +1,9 @@
 function informesPresentar() {
     Swal.fire({
-        title: '📊 Selecciona un informe',
+    
         html: `
+        <br>
+        <h4>Selecciona un informe:</h4>
             <div style="display: flex; flex-direction: column; gap: 10px; text-align: left;">
                 <button onclick="informeTrabajoCotidiano()" class="swal-btn">📌 Cálculo Trabajo Cotidiano</button>
                 <button onclick="informeGeneralTareas()" class="swal-btn">📌 Informe General Tareas</button>
